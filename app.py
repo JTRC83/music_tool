@@ -331,19 +331,14 @@ class ITunesHeader(tk.Canvas):
         self.stop_command = stop_command
         self.diagnostics_command = diagnostics_command
         self.pressed_tag: str | None = None
+        self.button_bounds: dict[str, tuple[int, int, int, int]] = {}
         self.status_var.trace_add("write", self._status_changed)
         self.progress_var.trace_add("write", self._status_changed)
         self.bind("<Configure>", self._redraw)
+        self.bind("<ButtonRelease-1>", self._release_pressed)
         self.tag_bind("start_button", "<ButtonPress-1>", lambda _event: self._press("start_button"))
         self.tag_bind("stop_button", "<ButtonPress-1>", lambda _event: self._press("stop_button"))
         self.tag_bind("diagnostics_button", "<ButtonPress-1>", lambda _event: self._press("diagnostics_button"))
-        self.tag_bind("start_button", "<ButtonRelease-1>", lambda _event: self._release("start_button", self.start_command))
-        self.tag_bind("stop_button", "<ButtonRelease-1>", lambda _event: self._release("stop_button", self.stop_command))
-        self.tag_bind(
-            "diagnostics_button",
-            "<ButtonRelease-1>",
-            lambda _event: self._release("diagnostics_button", self.diagnostics_command),
-        )
         self.tag_bind("start_button", "<Enter>", lambda _event: self.configure(cursor="pointinghand"))
         self.tag_bind("stop_button", "<Enter>", lambda _event: self.configure(cursor="pointinghand"))
         self.tag_bind("diagnostics_button", "<Enter>", lambda _event: self.configure(cursor="pointinghand"))
@@ -355,18 +350,31 @@ class ITunesHeader(tk.Canvas):
         self.pressed_tag = tag
         self._paint(max(self.winfo_width(), 620))
 
-    def _release(self, tag: str, command: object) -> None:
-        if self.pressed_tag != tag:
+    def _release_pressed(self, event: tk.Event) -> None:
+        tag = self.pressed_tag
+        if not tag:
             return
         self.pressed_tag = None
+        run_command = self._point_inside_button(tag, int(event.x), int(event.y))
         self._paint(max(self.winfo_width(), 620))
-        command()
+        if not run_command:
+            return
+        if tag == "start_button":
+            self.start_command()
+        elif tag == "stop_button":
+            self.stop_command()
+        elif tag == "diagnostics_button":
+            self.diagnostics_command()
+
+    def _point_inside_button(self, tag: str, x: int, y: int) -> bool:
+        bounds = self.button_bounds.get(tag)
+        if not bounds:
+            return False
+        x1, y1, x2, y2 = bounds
+        return x1 <= x <= x2 and y1 <= y <= y2
 
     def _leave_button(self) -> None:
         self.configure(cursor="")
-        if self.pressed_tag:
-            self.pressed_tag = None
-            self._paint(max(self.winfo_width(), 620))
 
     def _status_changed(self, *_args: object) -> None:
         self._paint(max(self.winfo_width(), 620))
@@ -389,38 +397,45 @@ class ITunesHeader(tk.Canvas):
         start_x = max(126, display_x - 146)
         stop_x = start_x + 64
         logo_x = start_x - 72
+        self.button_bounds = {
+            "start_button": (start_x - 28, button_y - 28, start_x + 28, button_y + 28),
+            "stop_button": (stop_x - 28, button_y - 28, stop_x + 28, button_y + 28),
+        }
 
         self.create_oval(
             logo_x - 25,
             button_y - 25,
             logo_x + 25,
             button_y + 25,
-            fill="#f3f5de",
-            outline="#767c68",
+            fill="#f7f7f7",
+            outline="#7d7d7d",
             width=2,
         )
         self.create_oval(
-            logo_x - 17,
-            button_y - 17,
-            logo_x + 17,
-            button_y + 17,
-            fill="#d4ddbd",
-            outline="#9ba486",
+            logo_x - 18,
+            button_y - 18,
+            logo_x + 18,
+            button_y + 18,
+            fill="#d9dec0",
+            outline="#6e7562",
             width=1,
         )
         self.create_arc(
-            logo_x - 20,
-            button_y - 20,
-            logo_x + 20,
-            button_y + 20,
+            logo_x - 21,
+            button_y - 21,
+            logo_x + 21,
+            button_y + 21,
             start=40,
             extent=110,
             outline="#ffffff",
             width=2,
             style=tk.ARC,
         )
-        self.create_text(logo_x, button_y - 4, text="♪", font=("Helvetica", 17, "bold"), fill="#25301f")
-        self.create_text(logo_x, button_y + 13, text="MT", font=("Helvetica", 8, "bold"), fill="#47503c")
+        self.create_line(logo_x - 7, button_y + 7, logo_x - 7, button_y - 9, fill="#25301f", width=2)
+        self.create_line(logo_x - 7, button_y - 9, logo_x + 7, button_y - 12, fill="#25301f", width=2)
+        self.create_line(logo_x + 7, button_y - 12, logo_x + 7, button_y + 3, fill="#25301f", width=2)
+        self.create_oval(logo_x - 14, button_y + 3, logo_x - 5, button_y + 12, fill="#25301f", outline="#25301f")
+        self.create_oval(logo_x, button_y - 1, logo_x + 9, button_y + 8, fill="#25301f", outline="#25301f")
 
         start_pressed = self.pressed_tag == "start_button"
         self.create_oval(
@@ -501,15 +516,15 @@ class ITunesHeader(tk.Canvas):
         )
         self.create_text(
             display_x + display_w // 2,
-            55,
+            50,
             text=self.status_var.get(),
             font=("Helvetica", 13, "bold"),
             fill="#1b1b1b",
         )
         progress_x1 = display_x + 72
         progress_x2 = display_x + display_w - 72
-        progress_y1 = 66
-        progress_y2 = 72
+        progress_y1 = 62
+        progress_y2 = 69
         try:
             progress = max(0.0, min(1.0, float(self.progress_var.get())))
         except (tk.TclError, ValueError):
@@ -521,6 +536,7 @@ class ITunesHeader(tk.Canvas):
 
         search_w = 150
         search_x = width - search_w - 56
+        self.button_bounds["diagnostics_button"] = (search_x, 36, search_x + search_w, 70)
         diagnostic_pressed = self.pressed_tag == "diagnostics_button"
         draw_rounded_rect(
             self,
@@ -641,10 +657,12 @@ class MusicToolApp(Tk):
         self.conversion_tab.rowconfigure(1, weight=1)
 
         controls = tk.Frame(self.conversion_tab, bg=METAL_BG)
-        controls.grid(row=0, column=0, sticky="w", padx=4, pady=(4, 8))
+        controls.grid(row=0, column=0, sticky="ew", padx=4, pady=(4, 8))
+        controls.columnconfigure(0, weight=1)
+        controls.columnconfigure(3, weight=1)
 
-        songs_panel = RoundedSection(controls, "1. Canciones", min_height=150, min_width=310)
-        songs_panel.grid(row=0, column=0, sticky="nw", padx=(0, 8))
+        songs_panel = RoundedSection(controls, "1. Canciones", min_height=185, min_width=340)
+        songs_panel.grid(row=0, column=1, sticky="n", padx=(0, 8))
         songs = songs_panel.content
         songs.columnconfigure(0, weight=1)
         ttk.Button(songs, text="Añadir canciones", command=self.add_files).grid(row=0, column=0, sticky="ew", padx=4, pady=4)
@@ -653,8 +671,8 @@ class MusicToolApp(Tk):
         )
         ttk.Button(songs, text="Vaciar lista", command=self.clear_files).grid(row=2, column=0, sticky="ew", padx=4, pady=4)
 
-        output_panel = RoundedSection(controls, "2. Salida", min_height=150, min_width=360)
-        output_panel.grid(row=0, column=1, sticky="nw", padx=(8, 0))
+        output_panel = RoundedSection(controls, "2. Salida", min_height=185, min_width=390)
+        output_panel.grid(row=0, column=2, sticky="n", padx=(8, 0))
         output = output_panel.content
         output.columnconfigure(1, weight=1)
         ttk.Button(output, text="Seleccionar carpeta", command=self.choose_output_dir).grid(
@@ -1589,7 +1607,7 @@ class MusicToolApp(Tk):
         self.log_message("")
         self.log_message("=== YouTube / URL ===")
         self.log_message(f"URL: {url}")
-        self.log_message("Modo: extraer la mejor pista de audio disponible sin forzar recodificación")
+        self.log_message("Modo: extraer la mejor pista de audio disponible y convertirla a MP3")
         self.log_message(f"Carpeta de salida: {output_dir}")
         self.after(0, lambda: self.set_progress(0.35))
 
@@ -1665,6 +1683,10 @@ class MusicToolApp(Tk):
             "-f",
             "bestaudio/best",
             "-x",
+            "--audio-format",
+            "mp3",
+            "--audio-quality",
+            "0",
             "--no-overwrites",
             "--restrict-filenames",
             "--embed-metadata",
