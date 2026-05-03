@@ -41,7 +41,7 @@ abrir_music_tool.command
 - Pestañas base para Conversión, Editor de canción y YouTube / URL.
 - Estética inspirada en iTunes clásico: fondo metálico, cabecera tipo reproductor y paneles redondeados.
 - Cabecera simplificada con acciones por icono: `▶` para iniciar y `■` para parar.
-- Botón `Diagnóstico` para comprobar Python, Tkinter, binarios locales y permisos.
+- Botón `Diagnóstico` con resumen visual para comprobar Python, Tkinter, binarios locales y permisos.
 - Conversión a MP3, AAC/M4A, FLAC y WAV con calidad/opciones por formato.
 - Conservación de metadatos originales con `-map_metadata 0`.
 - No sobrescribe archivos por defecto.

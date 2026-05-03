@@ -143,24 +143,24 @@
 <line x1="0" y1="813" x2="1120" y2="813" stroke="#eeeeee" opacity="0.28"/>
 <line x1="0" y1="819" x2="1120" y2="819" stroke="#eeeeee" opacity="0.28"/>
 <text x="532" y="28" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#111111">Music Tool</text>
-<rect x="40" y="44" width="70" height="36" rx="18" fill="url(#buttonChrome)" stroke="#7f7f7f"/>
-<text x="69" y="68" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#2f2f2f">▶</text>
-<rect x="128" y="44" width="70" height="36" rx="18" fill="url(#buttonChrome)" stroke="#7f7f7f"/>
-<text x="157" y="68" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#2f2f2f">■</text>
+<circle cx="236" cy="54" r="24" fill="url(#buttonChrome)" stroke="#7f7f7f" stroke-width="2"/>
+<text x="230" y="61" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#2f2f2f">▶</text>
+<circle cx="300" cy="54" r="24" fill="url(#buttonChrome)" stroke="#7f7f7f" stroke-width="2"/>
+<text x="294" y="61" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#2f2f2f">■</text>
 <rect x="338" y="40" width="444" height="56" rx="28" fill="#d9dec0" stroke="#7f8572"/>
 <text x="526" y="59" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="13" font-weight="700" fill="#1b1b1b">Music Tool</text>
 <text x="506" y="75" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#1b1b1b">Listo</text>
 <rect x="420" y="82" width="280" height="7" rx="1" fill="#edf0d5" stroke="#4f5447"/>
 <rect x="420" y="82" width="46" height="7" rx="1" fill="#2f2f2f" stroke="#2f2f2f"/>
-<rect x="858" y="47" width="180" height="32" rx="18" fill="#f9f9f9" stroke="#8f8f8f"/>
-<text x="906" y="68" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#202020">Diagnostico</text>
-<text x="902" y="97" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#202020">Comprobar sistema</text>
+<rect x="846" y="43" width="192" height="36" rx="18" fill="#f9f9f9" stroke="#8f8f8f"/>
+<text x="904" y="66" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#202020">Diagnostico</text>
+<text x="900" y="97" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#202020">Comprobar sistema</text>
 <rect x="42" y="112" width="1036" height="38" rx="14" fill="#d4d4d4" stroke="#8d8d8d"/>
 <rect x="52" y="118" width="128" height="26" rx="12" fill="#f8f8f8" stroke="#8d8d8d"/>
 <text x="76" y="136" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#222">Conversion</text>
 <text x="216" y="136" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="13" font-weight="500" fill="#444">Editor de cancion</text>
 <text x="384" y="136" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="13" font-weight="500" fill="#444">YouTube / URL</text>
-<rect x="42" y="168" width="260" height="132" rx="18" fill="#f4f4f4" stroke="#8f8f8f"/>
+<rect x="42" y="168" width="260" height="184" rx="24" fill="#f4f4f4" stroke="#8f8f8f"/>
 <line x1="60" y1="171" x2="284" y2="171" stroke="#ffffff"/>
 <text x="62" y="173" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#2e3338">1. Canciones</text>
 <rect x="58" y="194" width="216" height="30" rx="14" fill="#f9f9f9" stroke="#8f8f8f"/>
@@ -169,7 +169,7 @@
 <text x="70" y="250" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="13" font-weight="500" fill="#222">Quitar seleccionado</text>
 <rect x="58" y="266" width="216" height="30" rx="14" fill="#f9f9f9" stroke="#8f8f8f"/>
 <text x="70" y="286" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="13" font-weight="500" fill="#222">Vaciar lista</text>
-<rect x="322" y="168" width="342" height="132" rx="18" fill="#f4f4f4" stroke="#8f8f8f"/>
+<rect x="322" y="168" width="342" height="184" rx="24" fill="#f4f4f4" stroke="#8f8f8f"/>
 <line x1="340" y1="171" x2="646" y2="171" stroke="#ffffff"/>
 <text x="342" y="173" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#2e3338">2. Salida</text>
 <rect x="338" y="194" width="206" height="30" rx="14" fill="#f9f9f9" stroke="#8f8f8f"/>
@@ -182,7 +182,7 @@
 <text x="448" y="277" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#69727d">256k</text>
 <text x="584" y="243" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#1f2933">MP3 · AAC/M4A · FLAC · WAV</text>
 <text x="584" y="277" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#1f2933">Sobrescribir existentes</text>
-<rect x="684" y="168" width="394" height="152" rx="18" fill="#f4f4f4" stroke="#8f8f8f"/>
+<rect x="684" y="168" width="394" height="184" rx="24" fill="#f4f4f4" stroke="#8f8f8f"/>
 <line x1="702" y1="171" x2="1060" y2="171" stroke="#ffffff"/>
 <text x="704" y="173" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#2e3338">3. Proceso</text>
 <rect x="700" y="194" width="82" height="30" rx="14" fill="#f9f9f9" stroke="#8f8f8f"/>
@@ -191,44 +191,44 @@
 <text x="830" y="214" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#222">■</text>
 <text x="700" y="288" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="500" fill="#1f2933">Estado</text>
 <text x="760" y="288" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#3d454f">Listo</text>
-<rect x="42" y="322" width="1036" height="238" rx="18" fill="#ffffff" stroke="#8f8f8f"/>
-<rect x="42" y="322" width="1036" height="32" rx="18" fill="url(#tableHeader)" stroke="#8f8f8f"/>
-<text x="52" y="343" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#333">Cancion</text>
-<line x1="402" y1="322" x2="402" y2="560" stroke="#e2e2e2"/>
-<text x="412" y="343" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#333">Formato</text>
-<line x1="492" y1="322" x2="492" y2="560" stroke="#e2e2e2"/>
-<text x="502" y="343" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#333">Peso original</text>
-<line x1="622" y1="322" x2="622" y2="560" stroke="#e2e2e2"/>
-<text x="632" y="343" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#333">Peso final</text>
-<line x1="742" y1="322" x2="742" y2="560" stroke="#e2e2e2"/>
-<text x="752" y="343" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#333">Calidad</text>
-<line x1="832" y1="322" x2="832" y2="560" stroke="#e2e2e2"/>
-<text x="842" y="343" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#333">Estado</text>
-<line x1="1002" y1="322" x2="1002" y2="560" stroke="#e2e2e2"/>
-<line x1="42" y1="360" x2="1078" y2="360" stroke="#eeeeee"/>
-<text x="52" y="380" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#2f3740">song_01.flac</text>
-<text x="412" y="380" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#2f3740">FLAC</text>
-<text x="502" y="380" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#2f3740">35.4 MB</text>
-<text x="632" y="380" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#2f3740">-</text>
-<text x="752" y="380" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#2f3740">320k</text>
-<text x="842" y="380" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#2f3740">Pendiente</text>
-<rect x="44" y="376" width="1032" height="26" rx="2" fill="#2f82df" stroke="#2f82df"/>
-<line x1="42" y1="390" x2="1078" y2="390" stroke="#eeeeee"/>
-<text x="52" y="410" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#ffffff">song_02.flac</text>
-<text x="412" y="410" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#ffffff">FLAC</text>
-<text x="502" y="410" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#ffffff">42.1 MB</text>
-<text x="632" y="410" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#ffffff">-</text>
-<text x="752" y="410" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#ffffff">320k</text>
-<text x="842" y="410" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#ffffff">Pendiente</text>
-<line x1="42" y1="420" x2="1078" y2="420" stroke="#eeeeee"/>
-<text x="52" y="440" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#2f3740">song_03.wav</text>
-<text x="412" y="440" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#2f3740">WAV</text>
-<text x="502" y="440" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#2f3740">51.6 MB</text>
-<text x="632" y="440" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#2f3740">-</text>
-<text x="752" y="440" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#2f3740">320k</text>
-<text x="842" y="440" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#2f3740">Pendiente</text>
-<text x="50" y="591" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#3b3b3b">Carpeta de salida: sin seleccionar</text>
-<rect x="42" y="716" width="1036" height="64" rx="18" fill="#f4f4f4" stroke="#8f8f8f"/>
+<rect x="42" y="378" width="1036" height="196" rx="18" fill="#ffffff" stroke="#8f8f8f"/>
+<rect x="42" y="378" width="1036" height="32" rx="18" fill="url(#tableHeader)" stroke="#8f8f8f"/>
+<text x="52" y="399" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#333">Cancion</text>
+<line x1="402" y1="378" x2="402" y2="574" stroke="#e2e2e2"/>
+<text x="412" y="399" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#333">Formato</text>
+<line x1="492" y1="378" x2="492" y2="574" stroke="#e2e2e2"/>
+<text x="502" y="399" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#333">Peso original</text>
+<line x1="622" y1="378" x2="622" y2="574" stroke="#e2e2e2"/>
+<text x="632" y="399" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#333">Peso final</text>
+<line x1="742" y1="378" x2="742" y2="574" stroke="#e2e2e2"/>
+<text x="752" y="399" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#333">Calidad</text>
+<line x1="832" y1="378" x2="832" y2="574" stroke="#e2e2e2"/>
+<text x="842" y="399" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#333">Estado</text>
+<line x1="1002" y1="378" x2="1002" y2="574" stroke="#e2e2e2"/>
+<line x1="42" y1="416" x2="1078" y2="416" stroke="#eeeeee"/>
+<text x="52" y="436" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#2f3740">song_01.flac</text>
+<text x="412" y="436" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#2f3740">FLAC</text>
+<text x="502" y="436" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#2f3740">35.4 MB</text>
+<text x="632" y="436" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#2f3740">-</text>
+<text x="752" y="436" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#2f3740">320k</text>
+<text x="842" y="436" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#2f3740">Pendiente</text>
+<rect x="44" y="432" width="1032" height="26" rx="2" fill="#2f82df" stroke="#2f82df"/>
+<line x1="42" y1="446" x2="1078" y2="446" stroke="#eeeeee"/>
+<text x="52" y="466" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#ffffff">song_02.flac</text>
+<text x="412" y="466" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#ffffff">FLAC</text>
+<text x="502" y="466" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#ffffff">42.1 MB</text>
+<text x="632" y="466" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#ffffff">-</text>
+<text x="752" y="466" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#ffffff">320k</text>
+<text x="842" y="466" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#ffffff">Pendiente</text>
+<line x1="42" y1="476" x2="1078" y2="476" stroke="#eeeeee"/>
+<text x="52" y="496" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#2f3740">song_03.wav</text>
+<text x="412" y="496" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#2f3740">WAV</text>
+<text x="502" y="496" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#2f3740">51.6 MB</text>
+<text x="632" y="496" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#2f3740">-</text>
+<text x="752" y="496" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#2f3740">320k</text>
+<text x="842" y="496" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#2f3740">Pendiente</text>
+<text x="50" y="604" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#3b3b3b">Carpeta de salida: sin seleccionar</text>
+<rect x="42" y="716" width="1036" height="64" rx="24" fill="#f4f4f4" stroke="#8f8f8f"/>
 <line x1="60" y1="719" x2="1060" y2="719" stroke="#ffffff"/>
 <text x="62" y="721" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#2e3338">Registro global</text>
 <text x="58" y="750" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#313941">Listo. Los procesos y errores apareceran aqui.</text>

@@ -34,7 +34,7 @@ La pestaña YouTube / URL ya permite introducir una URL, seleccionar carpeta y e
 
 La pestaña Conversión ya soporta MP3, AAC/M4A, FLAC y WAV con opciones de calidad por formato.
 
-La cabecera incluye un botón de Diagnóstico que comprueba Python, Tkinter, carpeta `bin/`, permisos del lanzador y disponibilidad/versiones de `ffmpeg`, `ffprobe` y `yt-dlp`.
+La cabecera incluye un botón de Diagnóstico con resumen visual que comprueba Python, Tkinter, carpeta `bin/`, permisos del lanzador y disponibilidad/versiones de `ffmpeg`, `ffprobe` y `yt-dlp`.
 
 ## Siguiente fase recomendada
 

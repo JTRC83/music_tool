@@ -251,8 +251,8 @@ class RoundedSection(tk.Frame):
         self,
         master: tk.Widget,
         title: str = "",
-        radius: int = 16,
-        padding: int = 12,
+        radius: int = 24,
+        padding: int = 16,
         min_height: int = 120,
     ) -> None:
         super().__init__(master, bg=METAL_BG, highlightthickness=0, bd=0)
@@ -282,7 +282,7 @@ class RoundedSection(tk.Frame):
             outline=METAL_DARK,
             width=1,
         )
-        self.canvas.create_line(14, 10, width - 16, 10, fill="#ffffff", tags="panel")
+        self.canvas.create_line(20, 10, width - 22, 10, fill="#ffffff", tags="panel")
         if self.title:
             self.canvas.create_text(
                 18,
@@ -346,36 +346,36 @@ class ITunesHeader(tk.Canvas):
 
         self.create_text(width // 2, 18, text=APP_NAME, font=("Helvetica", 16, "bold"), fill="#111111")
 
-        draw_rounded_rect(
-            self,
-            28,
-            32,
-            178,
-            68,
-            18,
+        display_w = min(440, max(320, width - 640))
+        display_x = (width - display_w) // 2
+        button_y = 54
+        start_x = max(54, display_x - 146)
+        stop_x = start_x + 64
+
+        self.create_oval(
+            start_x - 24,
+            button_y - 24,
+            start_x + 24,
+            button_y + 24,
             fill="#f8f8f8",
             outline="#7d7d7d",
             width=2,
             tags="start_button",
         )
-        self.create_text(103, 54, text="▶", font=("Helvetica", 18, "bold"), fill="#202020", tags="start_button")
+        self.create_text(start_x + 1, button_y + 1, text="▶", font=("Helvetica", 18, "bold"), fill="#202020", tags="start_button")
 
-        draw_rounded_rect(
-            self,
-            190,
-            32,
-            288,
-            68,
-            18,
+        self.create_oval(
+            stop_x - 24,
+            button_y - 24,
+            stop_x + 24,
+            button_y + 24,
             fill="#eeeeee",
             outline="#7d7d7d",
             width=2,
             tags="stop_button",
         )
-        self.create_text(239, 54, text="■", font=("Helvetica", 16, "bold"), fill="#202020", tags="stop_button")
+        self.create_text(stop_x, button_y, text="■", font=("Helvetica", 18, "bold"), fill="#202020", tags="stop_button")
 
-        display_w = min(440, max(320, width - 640))
-        display_x = (width - display_w) // 2
         draw_rounded_rect(
             self,
             display_x,
@@ -399,28 +399,28 @@ class ITunesHeader(tk.Canvas):
         self.create_rectangle(display_x + 72, 70, display_x + display_w - 72, 74, fill="#e9edcf", outline="#575c4d")
         self.create_rectangle(display_x + 72, 70, display_x + 120, 74, fill="#303030", outline="")
 
-        search_x = width - 238
+        search_x = width - 248
         draw_rounded_rect(
             self,
             search_x,
             36,
-            search_x + 180,
-            62,
-            13,
+            search_x + 192,
+            66,
+            16,
             fill="#f7f7f7",
             outline="#8d8d8d",
             width=2,
             tags="diagnostics_button",
         )
         self.create_text(
-            search_x + 90,
-            54,
+            search_x + 96,
+            56,
             text="Diagnóstico",
             font=("Helvetica", 12, "bold"),
             fill="#202020",
             tags="diagnostics_button",
         )
-        self.create_text(search_x + 90, 80, text="Comprobar sistema", font=("Helvetica", 10), fill="#202020")
+        self.create_text(search_x + 96, 82, text="Comprobar sistema", font=("Helvetica", 10), fill="#202020")
 
 
 class MusicToolApp(Tk):
@@ -523,7 +523,7 @@ class MusicToolApp(Tk):
         controls.columnconfigure(1, weight=1)
         controls.columnconfigure(2, weight=1)
 
-        songs_panel = RoundedSection(controls, "1. Canciones", min_height=138)
+        songs_panel = RoundedSection(controls, "1. Canciones", min_height=190)
         songs_panel.grid(row=0, column=0, sticky="nsew", padx=(0, 8))
         songs = songs_panel.content
         songs.columnconfigure(0, weight=1)
@@ -533,7 +533,7 @@ class MusicToolApp(Tk):
         )
         ttk.Button(songs, text="Vaciar lista", command=self.clear_files).grid(row=2, column=0, sticky="ew", padx=4, pady=4)
 
-        output_panel = RoundedSection(controls, "2. Salida", min_height=138)
+        output_panel = RoundedSection(controls, "2. Salida", min_height=190)
         output_panel.grid(row=0, column=1, sticky="nsew", padx=8)
         output = output_panel.content
         output.columnconfigure(1, weight=1)
@@ -557,7 +557,7 @@ class MusicToolApp(Tk):
             row=3, column=0, columnspan=2, sticky="w", padx=4, pady=4
         )
 
-        process_panel = RoundedSection(controls, "3. Proceso", min_height=160)
+        process_panel = RoundedSection(controls, "3. Proceso", min_height=190)
         process_panel.grid(row=0, column=2, sticky="nsew", padx=(8, 0))
         process = process_panel.content
         process.columnconfigure(0, weight=1)
@@ -630,52 +630,53 @@ class MusicToolApp(Tk):
         log_scrollbar.grid(row=0, column=1, sticky="ns")
 
     def show_diagnostics(self) -> None:
-        lines = self._build_diagnostics_report()
-        report = "\n".join(lines)
+        items = self._build_diagnostics_items()
         self.log_message("")
         self.log_message("=== Diagnóstico del sistema ===")
-        for line in lines:
-            self.log_message(line)
+        for status, label, detail in items:
+            self.log_message(f"{status}: {label} - {detail}")
         self.set_status("Diagnóstico completado")
-        messagebox.showinfo("Diagnóstico de Music Tool", report)
+        self._show_diagnostics_window(items)
 
-    def _build_diagnostics_report(self) -> list[str]:
+    def _build_diagnostics_items(self) -> list[tuple[str, str, str]]:
         app_dir = base_path()
         bin_dir = app_dir / "bin"
         command_file = app_dir / "abrir_music_tool.command"
-        lines = [
-            f"Python: OK - {platform.python_version()}",
-            f"Ejecutable Python: {sys.executable}",
-            f"Tkinter: OK - Tk {tk.TkVersion} / Tcl {tk.TclVersion}",
-            f"macOS / sistema: {platform.platform()}",
-            f"Carpeta app: {'OK' if app_dir.exists() else 'FALTA'} - {app_dir}",
-            f"Carpeta bin: {'OK' if bin_dir.exists() else 'FALTA'} - {bin_dir}",
-            f"Permiso escritura app: {'OK' if os.access(app_dir, os.W_OK) else 'SIN PERMISO'}",
-            f"Lanzador .command: {self._file_status(command_file)}",
+        items = [
+            ("OK", "Python", f"{platform.python_version()} - {sys.executable}"),
+            ("OK", "Tkinter", f"Tk {tk.TkVersion} / Tcl {tk.TclVersion}"),
+            ("OK", "Sistema", platform.platform()),
+            ("OK" if app_dir.exists() else "FALTA", "Carpeta app", str(app_dir)),
+            ("OK" if bin_dir.exists() else "FALTA", "Carpeta bin", str(bin_dir)),
+            ("OK" if os.access(app_dir, os.W_OK) else "SIN PERMISO", "Permiso escritura app", str(app_dir)),
+            self._file_diagnostic("Lanzador .command", command_file),
         ]
         for name in ("ffmpeg", "ffprobe", "yt-dlp"):
-            lines.extend(self._binary_diagnostics(name))
-        return lines
+            items.extend(self._binary_diagnostics(name))
+        return items
 
-    def _file_status(self, path: Path) -> str:
+    def _file_diagnostic(self, label: str, path: Path) -> tuple[str, str, str]:
         if not path.exists():
-            return f"FALTA - {path}"
+            return ("FALTA", label, str(path))
         if not os.access(path, os.X_OK):
-            return f"SIN PERMISO - {path}"
-        return f"OK - {path}"
+            return ("SIN PERMISO", label, f"{path} - ejecuta chmod +x")
+        return ("OK", label, str(path))
 
-    def _binary_diagnostics(self, name: str) -> list[str]:
+    def _binary_diagnostics(self, name: str) -> list[tuple[str, str, str]]:
         path = find_binary(name)
         if not path:
-            return [f"{name}: FALTA - añade {name} a bin/ o al PATH"]
+            return [("FALTA", name, f"añade {name} a bin/ o al PATH")]
 
         binary_path = Path(path)
         location = "bin" if binary_path.parent == base_path() / "bin" else "PATH"
         if not os.access(path, os.X_OK):
-            return [f"{name}: SIN PERMISO - {path}", f"{name}: ejecuta chmod +x {path}"]
+            return [("SIN PERMISO", name, f"{path} - ejecuta chmod +x")]
 
         version = self._binary_version(name, path)
-        return [f"{name}: OK ({location}) - {path}", f"{name} versión: {version}"]
+        return [
+            ("OK", name, f"{location} - {path}"),
+            ("OK", f"{name} versión", version),
+        ]
 
     def _binary_version(self, name: str, path: str) -> str:
         command = [path, "--version"] if name == "yt-dlp" else [path, "-version"]
@@ -687,6 +688,53 @@ class MusicToolApp(Tk):
         if not first_line:
             return "sin salida de versión"
         return first_line[0][:160]
+
+    def _show_diagnostics_window(self, items: list[tuple[str, str, str]]) -> None:
+        all_ok = all(status == "OK" for status, _label, _detail in items)
+        window = tk.Toplevel(self)
+        window.title("Diagnóstico de Music Tool")
+        window.geometry("760x520")
+        window.minsize(640, 420)
+        window.transient(self)
+        window.configure(bg=METAL_BG)
+
+        header_color = "#d8ead2" if all_ok else "#f0dfc4"
+        header_text = "Todo está listo" if all_ok else "Hay puntos a revisar"
+        header = tk.Frame(window, bg=header_color, padx=18, pady=14)
+        header.pack(fill=tk.X, padx=14, pady=(14, 8))
+        tk.Label(header, text=header_text, bg=header_color, fg="#1f2a1f", font=("Helvetica", 18, "bold")).pack(anchor=tk.W)
+        tk.Label(
+            header,
+            text="Python, Tkinter, permisos y binarios locales comprobados.",
+            bg=header_color,
+            fg="#2f3f2f",
+            font=("Helvetica", 12),
+        ).pack(anchor=tk.W, pady=(4, 0))
+
+        table_frame = tk.Frame(window, bg=METAL_BG, padx=14)
+        table_frame.pack(fill=tk.BOTH, expand=True)
+        columns = ("status", "item", "detail")
+        table = ttk.Treeview(table_frame, columns=columns, show="headings", height=12)
+        table.heading("status", text="Estado")
+        table.heading("item", text="Comprobación")
+        table.heading("detail", text="Detalle")
+        table.column("status", width=110, anchor=tk.CENTER)
+        table.column("item", width=170, anchor=tk.W)
+        table.column("detail", width=440, anchor=tk.W)
+        table.tag_configure("ok", background="#edf7ea")
+        table.tag_configure("warn", background="#fff4d8")
+        table.tag_configure("error", background="#f8dddd")
+        for status, label, detail in items:
+            tag = "ok" if status == "OK" else "error" if status == "FALTA" else "warn"
+            table.insert("", tk.END, values=(status, label, detail), tags=(tag,))
+        scrollbar = ttk.Scrollbar(table_frame, orient=tk.VERTICAL, command=table.yview)
+        table.configure(yscrollcommand=scrollbar.set)
+        table.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+
+        buttons = tk.Frame(window, bg=METAL_BG, padx=14, pady=12)
+        buttons.pack(fill=tk.X)
+        ttk.Button(buttons, text="Cerrar", command=window.destroy).pack(side=tk.RIGHT)
 
     def _build_editor_tab(self) -> None:
         self.editor_tab.columnconfigure(0, weight=1)
@@ -757,7 +805,7 @@ class MusicToolApp(Tk):
             row=11, column=0, columnspan=2, sticky="ew", padx=4, pady=(8, 4)
         )
 
-        waveform_panel = RoundedSection(self.editor_tab, "Forma de onda y edición visual", min_height=270)
+        waveform_panel = RoundedSection(self.editor_tab, "Edición visual", min_height=360)
         waveform_panel.grid(row=2, column=0, columnspan=2, sticky="ew", padx=4, pady=(8, 4))
         waveform = waveform_panel.content
         waveform.columnconfigure(0, weight=1)
@@ -766,7 +814,7 @@ class MusicToolApp(Tk):
         self.waveform_label.grid(
             row=0, column=0, sticky="ew", padx=8, pady=14
         )
-        self.edit_visual_canvas = tk.Canvas(waveform, height=74, bg=PANEL_FILL, highlightthickness=0, bd=0)
+        self.edit_visual_canvas = tk.Canvas(waveform, height=150, bg=PANEL_FILL, highlightthickness=0, bd=0)
         self.edit_visual_canvas.grid(row=1, column=0, sticky="ew", padx=8, pady=(0, 10))
         self.edit_visual_canvas.bind("<Configure>", self._redraw_editor_visual)
         self.edit_visual_canvas.bind("<Button-1>", self._start_editor_visual_drag)
@@ -785,7 +833,7 @@ class MusicToolApp(Tk):
         ttk.Label(source, text="URL").grid(row=0, column=0, sticky="w", padx=4, pady=4)
         ttk.Entry(source, textvariable=self.url_value).grid(row=0, column=1, sticky="ew", padx=4, pady=4)
 
-        options_panel = RoundedSection(self.url_tab, "2. Extracción de audio", min_height=118)
+        options_panel = RoundedSection(self.url_tab, "2. Extracción de audio", min_height=170)
         options_panel.grid(row=1, column=0, sticky="new", padx=4, pady=4)
         options = options_panel.content
         options.columnconfigure(1, weight=1)
@@ -981,13 +1029,13 @@ class MusicToolApp(Tk):
         if not canvas:
             return
         width = max(canvas.winfo_width(), 640)
-        height = max(canvas.winfo_height(), 74)
+        height = max(canvas.winfo_height(), 150)
         canvas.delete("all")
 
         left = 24
         right = width - 24
-        top = 18
-        bottom = height - 18
+        top = 32
+        bottom = height - 42
         mid = (top + bottom) // 2
         draw_rounded_rect(canvas, left, top, right, bottom, 16, fill="#ffffff", outline="#a1a1a1", tags="visual")
 

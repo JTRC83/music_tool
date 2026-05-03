@@ -54,7 +54,7 @@ def field(x: int, y: int, w: int, label: str = "") -> str:
 def group(x: int, y: int, w: int, h: int, title: str) -> str:
     return "\n".join(
         [
-            rect(x, y, w, h, PANEL_FILL, METAL_DARK, 18),
+            rect(x, y, w, h, PANEL_FILL, METAL_DARK, 24),
             f'<line x1="{x + 18}" y1="{y + 3}" x2="{x + w - 18}" y2="{y + 3}" stroke="#ffffff"/>',
             text(x + 20, y + 5, title, 13, "600", "#2e3338"),
         ]
@@ -66,6 +66,15 @@ def header_button(x: int, y: int, w: int, label: str) -> str:
         [
             rect(x, y, w, 36, "url(#buttonChrome)", "#7f7f7f", 18),
             text(x + (w // 2) - 6, y + 24, label, 16, "700", "#2f2f2f"),
+        ]
+    )
+
+
+def round_header_button(cx: int, cy: int, label: str) -> str:
+    return "\n".join(
+        [
+            f'<circle cx="{cx}" cy="{cy}" r="24" fill="url(#buttonChrome)" stroke="#7f7f7f" stroke-width="2"/>',
+            text(cx - 6, cy + 7, label, 18, "700", "#2f2f2f"),
         ]
     )
 
@@ -88,16 +97,16 @@ def chrome(active: str) -> list[str]:
         rect(0, 0, WIDTH, HEIGHT, "url(#metal)", "#a0a0a0", 0),
         *[f'<line x1="0" y1="{y}" x2="{WIDTH}" y2="{y}" stroke="#eeeeee" opacity="0.28"/>' for y in range(3, HEIGHT, 6)],
         text(532, 28, "Music Tool", 18, "700", "#111111"),
-        header_button(40, 44, 70, "▶"),
-        header_button(128, 44, 70, "■"),
+        round_header_button(236, 54, "▶"),
+        round_header_button(300, 54, "■"),
         rect(338, 40, 444, 56, DISPLAY_FILL, "#7f8572", 28),
         text(526, 59, "Music Tool", 13, "700", "#1b1b1b"),
         text(506, 75, "Listo", 12, "400", "#1b1b1b"),
         rect(420, 82, 280, 7, "#edf0d5", "#4f5447", 1),
         rect(420, 82, 46, 7, "#2f2f2f", "#2f2f2f", 1),
-        rect(858, 47, 180, 32, "#f9f9f9", "#8f8f8f", 18),
-        text(906, 68, "Diagnostico", 12, "700", "#202020"),
-        text(902, 97, "Comprobar sistema", 12, "400", "#202020"),
+        rect(846, 43, 192, 36, "#f9f9f9", "#8f8f8f", 18),
+        text(904, 66, "Diagnostico", 12, "700", "#202020"),
+        text(900, 97, "Comprobar sistema", 12, "400", "#202020"),
         rect(42, 112, 1036, 38, "#d4d4d4", "#8d8d8d", 14),
     ]
     for key, label, x, w in tabs:
@@ -141,11 +150,11 @@ def table(x: int, y: int, w: int, h: int) -> str:
 def render_conversion() -> str:
     parts = chrome("conversion")
     parts += [
-        group(42, 168, 260, 132, "1. Canciones"),
+        group(42, 168, 260, 184, "1. Canciones"),
         button(58, 194, 216, "Anadir canciones"),
         button(58, 230, 216, "Quitar seleccionado"),
         button(58, 266, 216, "Vaciar lista"),
-        group(322, 168, 342, 132, "2. Salida"),
+        group(322, 168, 342, 184, "2. Salida"),
         button(338, 194, 206, "Seleccionar carpeta"),
         text(338, 243, "Formato", 12, "500"),
         field(438, 224, 120, "AAC/M4A"),
@@ -153,13 +162,13 @@ def render_conversion() -> str:
         field(438, 258, 120, "256k"),
         text(584, 243, "MP3 · AAC/M4A · FLAC · WAV", 12, "400"),
         text(584, 277, "Sobrescribir existentes", 12, "400"),
-        group(684, 168, 394, 152, "3. Proceso"),
+        group(684, 168, 394, 184, "3. Proceso"),
         button(700, 194, 82, "▶", True),
         button(794, 194, 82, "■", True),
         text(700, 288, "Estado", 12, "500"),
         text(760, 288, "Listo", 13, "400", "#3d454f"),
-        table(42, 322, 1036, 238),
-        text(50, 591, "Carpeta de salida: sin seleccionar", 12, "400", "#3b3b3b"),
+        table(42, 378, 1036, 196),
+        text(50, 604, "Carpeta de salida: sin seleccionar", 12, "400", "#3b3b3b"),
         *log_and_status(),
         "</svg>",
     ]
@@ -177,18 +186,18 @@ def render_editor() -> str:
         *metadata_fields(64, 306),
         group(578, 276, 500, 292, "3. Edicion y exportacion"),
         *edit_fields(600, 306),
-        group(42, 590, 1036, 108, "Forma de onda y edicion visual"),
-        rect(64, 625, 992, 44, "#ffffff", "#a1a1a1", 16),
+        group(42, 584, 1036, 132, "Edicion visual"),
+        rect(64, 614, 992, 44, "#ffffff", "#a1a1a1", 16),
         *wave_lines(84, 646),
-        rect(64, 674, 992, 22, "#ffffff", "#a1a1a1", 11),
-        rect(64, 676, 130, 18, "#d9d9d9", "#d9d9d9", 4),
-        rect(902, 676, 154, 18, "#d9d9d9", "#d9d9d9", 4),
-        rect(130, 676, 772, 18, "#eef5ff", "#eef5ff", 4),
-        '<polygon points="130,694 220,676 220,694" fill="#c7ddff"/>',
-        '<polygon points="812,676 902,694 812,694" fill="#d9c7ff"/>',
-        '<line x1="130" y1="684" x2="902" y2="684" stroke="#202020" stroke-width="2"/>',
-        text(138, 672, "inicio", 9, "500", "#2f82df"),
-        text(846, 672, "fade out", 9, "500", "#64469c"),
+        rect(64, 672, 992, 34, "#ffffff", "#a1a1a1", 16),
+        rect(64, 674, 130, 30, "#d9d9d9", "#d9d9d9", 8),
+        rect(902, 674, 154, 30, "#d9d9d9", "#d9d9d9", 8),
+        rect(130, 674, 772, 30, "#eef5ff", "#eef5ff", 8),
+        '<polygon points="130,704 240,674 240,704" fill="#c7ddff"/>',
+        '<polygon points="792,674 902,704 792,704" fill="#d9c7ff"/>',
+        '<line x1="130" y1="688" x2="902" y2="688" stroke="#202020" stroke-width="3"/>',
+        text(138, 668, "inicio", 9, "500", "#2f82df"),
+        text(838, 668, "fade out", 9, "500", "#64469c"),
         *log_and_status(),
         "</svg>",
     ]
@@ -234,22 +243,22 @@ def render_url() -> str:
         group(42, 168, 1036, 88, "1. URL"),
         text(66, 218, "URL", 12, "500"),
         field(122, 198, 910, "https://www.youtube.com/watch?v=..."),
-        group(42, 282, 1036, 118, "2. Extraccion de audio"),
+        group(42, 282, 1036, 160, "2. Extraccion de audio"),
         button(66, 312, 170, "Seleccionar carpeta"),
         text(260, 332, "/Users/JoanToni/Music/Descargas", 12, "400", "#3b3b3b"),
-        button(66, 356, 190, "Extraer audio"),
-        group(42, 430, 1036, 160, "Resultados"),
-        rect(64, 462, 992, 32, "url(#tableHeader)", "#8f8f8f", 14),
-        text(82, 483, "Archivo", 12, "600", "#333"),
-        text(612, 483, "Formato", 12, "600", "#333"),
-        text(738, 483, "Peso", 12, "600", "#333"),
-        text(858, 483, "Estado", 12, "600", "#333"),
-        text(82, 526, "01 - Blue Orchid.m4a", 12, "400", "#2f3740"),
-        text(612, 526, "M4A", 12, "400", "#2f3740"),
-        text(738, 526, "7.8 MB", 12, "400", "#2f3740"),
-        text(858, 526, "Listo", 12, "400", "#2f3740"),
-        group(42, 614, 1036, 84, "Uso previsto"),
-        text(66, 656, "Funcion pensada para uso personal y local: material propio, con permiso, o contenido que tengas derecho a guardar.", 12, "400", "#333333"),
+        button(66, 364, 190, "Extraer audio"),
+        group(42, 468, 1036, 136, "Resultados"),
+        rect(64, 500, 992, 32, "url(#tableHeader)", "#8f8f8f", 14),
+        text(82, 521, "Archivo", 12, "600", "#333"),
+        text(612, 521, "Formato", 12, "600", "#333"),
+        text(738, 521, "Peso", 12, "600", "#333"),
+        text(858, 521, "Estado", 12, "600", "#333"),
+        text(82, 562, "01 - Blue Orchid.m4a", 12, "400", "#2f3740"),
+        text(612, 562, "M4A", 12, "400", "#2f3740"),
+        text(738, 562, "7.8 MB", 12, "400", "#2f3740"),
+        text(858, 562, "Listo", 12, "400", "#2f3740"),
+        group(42, 626, 1036, 72, "Uso previsto"),
+        text(66, 668, "Funcion pensada para uso personal y local: material propio, con permiso, o contenido que tengas derecho a guardar.", 12, "400", "#333333"),
         *log_and_status(),
         "</svg>",
     ]
