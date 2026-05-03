@@ -1,0 +1,198 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="820" viewBox="0 0 1120 820">
+<defs>
+<linearGradient id="metal" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#d6d6d6"/><stop offset="0.5" stop-color="#b4b4b4"/><stop offset="1" stop-color="#d0d0d0"/></linearGradient>
+<linearGradient id="buttonChrome" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="0.52" stop-color="#c8c8c8"/><stop offset="1" stop-color="#f1f1f1"/></linearGradient>
+<linearGradient id="tableHeader" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#f9f9f9"/><stop offset="1" stop-color="#bdbdbd"/></linearGradient>
+</defs>
+<rect x="0" y="0" width="1120" height="820" rx="0" fill="url(#metal)" stroke="#a0a0a0"/>
+<line x1="0" y1="3" x2="1120" y2="3" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="9" x2="1120" y2="9" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="15" x2="1120" y2="15" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="21" x2="1120" y2="21" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="27" x2="1120" y2="27" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="33" x2="1120" y2="33" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="39" x2="1120" y2="39" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="45" x2="1120" y2="45" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="51" x2="1120" y2="51" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="57" x2="1120" y2="57" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="63" x2="1120" y2="63" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="69" x2="1120" y2="69" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="75" x2="1120" y2="75" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="81" x2="1120" y2="81" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="87" x2="1120" y2="87" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="93" x2="1120" y2="93" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="99" x2="1120" y2="99" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="105" x2="1120" y2="105" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="111" x2="1120" y2="111" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="117" x2="1120" y2="117" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="123" x2="1120" y2="123" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="129" x2="1120" y2="129" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="135" x2="1120" y2="135" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="141" x2="1120" y2="141" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="147" x2="1120" y2="147" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="153" x2="1120" y2="153" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="159" x2="1120" y2="159" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="165" x2="1120" y2="165" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="171" x2="1120" y2="171" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="177" x2="1120" y2="177" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="183" x2="1120" y2="183" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="189" x2="1120" y2="189" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="195" x2="1120" y2="195" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="201" x2="1120" y2="201" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="207" x2="1120" y2="207" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="213" x2="1120" y2="213" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="219" x2="1120" y2="219" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="225" x2="1120" y2="225" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="231" x2="1120" y2="231" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="237" x2="1120" y2="237" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="243" x2="1120" y2="243" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="249" x2="1120" y2="249" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="255" x2="1120" y2="255" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="261" x2="1120" y2="261" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="267" x2="1120" y2="267" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="273" x2="1120" y2="273" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="279" x2="1120" y2="279" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="285" x2="1120" y2="285" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="291" x2="1120" y2="291" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="297" x2="1120" y2="297" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="303" x2="1120" y2="303" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="309" x2="1120" y2="309" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="315" x2="1120" y2="315" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="321" x2="1120" y2="321" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="327" x2="1120" y2="327" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="333" x2="1120" y2="333" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="339" x2="1120" y2="339" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="345" x2="1120" y2="345" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="351" x2="1120" y2="351" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="357" x2="1120" y2="357" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="363" x2="1120" y2="363" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="369" x2="1120" y2="369" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="375" x2="1120" y2="375" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="381" x2="1120" y2="381" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="387" x2="1120" y2="387" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="393" x2="1120" y2="393" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="399" x2="1120" y2="399" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="405" x2="1120" y2="405" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="411" x2="1120" y2="411" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="417" x2="1120" y2="417" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="423" x2="1120" y2="423" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="429" x2="1120" y2="429" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="435" x2="1120" y2="435" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="441" x2="1120" y2="441" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="447" x2="1120" y2="447" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="453" x2="1120" y2="453" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="459" x2="1120" y2="459" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="465" x2="1120" y2="465" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="471" x2="1120" y2="471" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="477" x2="1120" y2="477" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="483" x2="1120" y2="483" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="489" x2="1120" y2="489" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="495" x2="1120" y2="495" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="501" x2="1120" y2="501" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="507" x2="1120" y2="507" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="513" x2="1120" y2="513" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="519" x2="1120" y2="519" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="525" x2="1120" y2="525" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="531" x2="1120" y2="531" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="537" x2="1120" y2="537" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="543" x2="1120" y2="543" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="549" x2="1120" y2="549" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="555" x2="1120" y2="555" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="561" x2="1120" y2="561" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="567" x2="1120" y2="567" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="573" x2="1120" y2="573" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="579" x2="1120" y2="579" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="585" x2="1120" y2="585" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="591" x2="1120" y2="591" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="597" x2="1120" y2="597" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="603" x2="1120" y2="603" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="609" x2="1120" y2="609" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="615" x2="1120" y2="615" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="621" x2="1120" y2="621" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="627" x2="1120" y2="627" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="633" x2="1120" y2="633" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="639" x2="1120" y2="639" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="645" x2="1120" y2="645" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="651" x2="1120" y2="651" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="657" x2="1120" y2="657" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="663" x2="1120" y2="663" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="669" x2="1120" y2="669" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="675" x2="1120" y2="675" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="681" x2="1120" y2="681" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="687" x2="1120" y2="687" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="693" x2="1120" y2="693" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="699" x2="1120" y2="699" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="705" x2="1120" y2="705" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="711" x2="1120" y2="711" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="717" x2="1120" y2="717" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="723" x2="1120" y2="723" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="729" x2="1120" y2="729" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="735" x2="1120" y2="735" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="741" x2="1120" y2="741" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="747" x2="1120" y2="747" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="753" x2="1120" y2="753" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="759" x2="1120" y2="759" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="765" x2="1120" y2="765" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="771" x2="1120" y2="771" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="777" x2="1120" y2="777" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="783" x2="1120" y2="783" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="789" x2="1120" y2="789" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="795" x2="1120" y2="795" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="801" x2="1120" y2="801" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="807" x2="1120" y2="807" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="813" x2="1120" y2="813" stroke="#eeeeee" opacity="0.28"/>
+<line x1="0" y1="819" x2="1120" y2="819" stroke="#eeeeee" opacity="0.28"/>
+<text x="532" y="28" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#111111">Music Tool</text>
+<rect x="40" y="44" width="70" height="36" rx="18" fill="url(#buttonChrome)" stroke="#7f7f7f"/>
+<text x="69" y="68" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#2f2f2f">▶</text>
+<rect x="128" y="44" width="70" height="36" rx="18" fill="url(#buttonChrome)" stroke="#7f7f7f"/>
+<text x="157" y="68" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#2f2f2f">■</text>
+<rect x="338" y="40" width="444" height="56" rx="28" fill="#d9dec0" stroke="#7f8572"/>
+<text x="526" y="59" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="13" font-weight="700" fill="#1b1b1b">Music Tool</text>
+<text x="506" y="75" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#1b1b1b">Listo</text>
+<rect x="420" y="82" width="280" height="7" rx="1" fill="#edf0d5" stroke="#4f5447"/>
+<rect x="420" y="82" width="46" height="7" rx="1" fill="#2f2f2f" stroke="#2f2f2f"/>
+<rect x="888" y="47" width="140" height="32" rx="18" fill="#f9f9f9" stroke="#8f8f8f"/>
+<text x="934" y="97" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#202020">Search</text>
+<rect x="42" y="112" width="1036" height="38" rx="14" fill="#d4d4d4" stroke="#8d8d8d"/>
+<text x="76" y="136" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="13" font-weight="500" fill="#444">Conversion</text>
+<text x="216" y="136" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="13" font-weight="500" fill="#444">Editor de cancion</text>
+<rect x="360" y="118" width="132" height="26" rx="12" fill="#f8f8f8" stroke="#8d8d8d"/>
+<text x="384" y="136" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#222">YouTube / URL</text>
+<rect x="42" y="168" width="1036" height="88" rx="18" fill="#f4f4f4" stroke="#8f8f8f"/>
+<line x1="60" y1="171" x2="1060" y2="171" stroke="#ffffff"/>
+<text x="62" y="173" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#2e3338">1. URL</text>
+<text x="66" y="218" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="500" fill="#1f2933">URL</text>
+<rect x="122" y="198" width="910" height="28" rx="11" fill="#ffffff" stroke="#a1a1a1"/>
+<text x="132" y="217" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#69727d">https://www.youtube.com/watch?v=...</text>
+<rect x="42" y="282" width="1036" height="118" rx="18" fill="#f4f4f4" stroke="#8f8f8f"/>
+<line x1="60" y1="285" x2="1060" y2="285" stroke="#ffffff"/>
+<text x="62" y="287" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#2e3338">2. Extraccion de audio</text>
+<rect x="66" y="312" width="170" height="30" rx="14" fill="#f9f9f9" stroke="#8f8f8f"/>
+<text x="78" y="332" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="13" font-weight="500" fill="#222">Seleccionar carpeta</text>
+<text x="260" y="332" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#3b3b3b">/Users/JoanToni/Music/Descargas</text>
+<rect x="66" y="356" width="190" height="30" rx="14" fill="#f9f9f9" stroke="#8f8f8f"/>
+<text x="78" y="376" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="13" font-weight="500" fill="#222">Extraer audio</text>
+<rect x="42" y="430" width="1036" height="160" rx="18" fill="#f4f4f4" stroke="#8f8f8f"/>
+<line x1="60" y1="433" x2="1060" y2="433" stroke="#ffffff"/>
+<text x="62" y="435" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#2e3338">Resultados</text>
+<rect x="64" y="462" width="992" height="32" rx="14" fill="url(#tableHeader)" stroke="#8f8f8f"/>
+<text x="82" y="483" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#333">Archivo</text>
+<text x="612" y="483" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#333">Formato</text>
+<text x="738" y="483" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#333">Peso</text>
+<text x="858" y="483" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#333">Estado</text>
+<text x="82" y="526" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#2f3740">01 - Blue Orchid.m4a</text>
+<text x="612" y="526" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#2f3740">M4A</text>
+<text x="738" y="526" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#2f3740">7.8 MB</text>
+<text x="858" y="526" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#2f3740">Listo</text>
+<rect x="42" y="614" width="1036" height="84" rx="18" fill="#f4f4f4" stroke="#8f8f8f"/>
+<line x1="60" y1="617" x2="1060" y2="617" stroke="#ffffff"/>
+<text x="62" y="619" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#2e3338">Uso previsto</text>
+<text x="66" y="656" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#333333">Funcion pensada para uso personal y local: material propio, con permiso, o contenido que tengas derecho a guardar.</text>
+<rect x="42" y="716" width="1036" height="64" rx="18" fill="#f4f4f4" stroke="#8f8f8f"/>
+<line x1="60" y1="719" x2="1060" y2="719" stroke="#ffffff"/>
+<text x="62" y="721" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#2e3338">Registro global</text>
+<text x="58" y="750" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#313941">Listo. Los procesos y errores apareceran aqui.</text>
+<rect x="42" y="790" width="1036" height="22" rx="11" fill="#d4d4d4" stroke="#969696"/>
+<text x="58" y="806" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="11" font-weight="500" fill="#222">Listo</text>
+</svg>

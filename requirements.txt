@@ -1,0 +1,5 @@
+# Music Tool currently uses only Python standard library.
+# External binaries required:
+# - ffmpeg
+# - ffprobe
+# - yt-dlp
