@@ -11,7 +11,7 @@ import subprocess
 import sys
 import threading
 from pathlib import Path
-from tkinter import BooleanVar, StringVar, Tk, filedialog, messagebox
+from tkinter import BooleanVar, DoubleVar, StringVar, Tk, filedialog, messagebox
 from tkinter import ttk
 import tkinter as tk
 
@@ -251,8 +251,8 @@ class RoundedSection(tk.Frame):
         self,
         master: tk.Widget,
         title: str = "",
-        radius: int = 24,
-        padding: int = 16,
+        radius: int = 30,
+        padding: int = 18,
         min_height: int = 120,
     ) -> None:
         super().__init__(master, bg=METAL_BG, highlightthickness=0, bd=0)
@@ -310,26 +310,54 @@ class ITunesHeader(tk.Canvas):
         self,
         master: tk.Widget,
         status_var: StringVar,
+        progress_var: DoubleVar,
         start_command: object,
         stop_command: object,
         diagnostics_command: object,
     ) -> None:
         super().__init__(master, height=92, bg=METAL_BG, highlightthickness=0, bd=0)
         self.status_var = status_var
+        self.progress_var = progress_var
         self.start_command = start_command
         self.stop_command = stop_command
         self.diagnostics_command = diagnostics_command
+        self.pressed_tag: str | None = None
         self.status_var.trace_add("write", self._status_changed)
+        self.progress_var.trace_add("write", self._status_changed)
         self.bind("<Configure>", self._redraw)
-        self.tag_bind("start_button", "<Button-1>", lambda _event: self.start_command())
-        self.tag_bind("stop_button", "<Button-1>", lambda _event: self.stop_command())
-        self.tag_bind("diagnostics_button", "<Button-1>", lambda _event: self.diagnostics_command())
+        self.tag_bind("start_button", "<ButtonPress-1>", lambda _event: self._press("start_button"))
+        self.tag_bind("stop_button", "<ButtonPress-1>", lambda _event: self._press("stop_button"))
+        self.tag_bind("diagnostics_button", "<ButtonPress-1>", lambda _event: self._press("diagnostics_button"))
+        self.tag_bind("start_button", "<ButtonRelease-1>", lambda _event: self._release("start_button", self.start_command))
+        self.tag_bind("stop_button", "<ButtonRelease-1>", lambda _event: self._release("stop_button", self.stop_command))
+        self.tag_bind(
+            "diagnostics_button",
+            "<ButtonRelease-1>",
+            lambda _event: self._release("diagnostics_button", self.diagnostics_command),
+        )
         self.tag_bind("start_button", "<Enter>", lambda _event: self.configure(cursor="pointinghand"))
         self.tag_bind("stop_button", "<Enter>", lambda _event: self.configure(cursor="pointinghand"))
         self.tag_bind("diagnostics_button", "<Enter>", lambda _event: self.configure(cursor="pointinghand"))
-        self.tag_bind("start_button", "<Leave>", lambda _event: self.configure(cursor=""))
-        self.tag_bind("stop_button", "<Leave>", lambda _event: self.configure(cursor=""))
-        self.tag_bind("diagnostics_button", "<Leave>", lambda _event: self.configure(cursor=""))
+        self.tag_bind("start_button", "<Leave>", lambda _event: self._leave_button())
+        self.tag_bind("stop_button", "<Leave>", lambda _event: self._leave_button())
+        self.tag_bind("diagnostics_button", "<Leave>", lambda _event: self._leave_button())
+
+    def _press(self, tag: str) -> None:
+        self.pressed_tag = tag
+        self._paint(max(self.winfo_width(), 620))
+
+    def _release(self, tag: str, command: object) -> None:
+        if self.pressed_tag != tag:
+            return
+        self.pressed_tag = None
+        self._paint(max(self.winfo_width(), 620))
+        command()
+
+    def _leave_button(self) -> None:
+        self.configure(cursor="")
+        if self.pressed_tag:
+            self.pressed_tag = None
+            self._paint(max(self.winfo_width(), 620))
 
     def _status_changed(self, *_args: object) -> None:
         self._paint(max(self.winfo_width(), 620))
@@ -349,32 +377,86 @@ class ITunesHeader(tk.Canvas):
         display_w = min(440, max(320, width - 640))
         display_x = (width - display_w) // 2
         button_y = 54
-        start_x = max(54, display_x - 146)
+        start_x = max(126, display_x - 146)
         stop_x = start_x + 64
+        logo_x = start_x - 72
 
+        self.create_oval(
+            logo_x - 24,
+            button_y - 24,
+            logo_x + 24,
+            button_y + 24,
+            fill="#dde3c7",
+            outline="#767c68",
+            width=2,
+        )
+        self.create_text(logo_x, button_y - 3, text="MT", font=("Helvetica", 14, "bold"), fill="#1d2218")
+        self.create_text(logo_x, button_y + 13, text="audio", font=("Helvetica", 7, "bold"), fill="#47503c")
+
+        start_pressed = self.pressed_tag == "start_button"
         self.create_oval(
             start_x - 24,
             button_y - 24,
             start_x + 24,
             button_y + 24,
-            fill="#f8f8f8",
+            fill="#dfe9d7" if start_pressed else "#f8f8f8",
             outline="#7d7d7d",
             width=2,
             tags="start_button",
         )
-        self.create_text(start_x + 1, button_y + 1, text="▶", font=("Helvetica", 18, "bold"), fill="#202020", tags="start_button")
+        self.create_arc(
+            start_x - 19,
+            button_y - 19,
+            start_x + 19,
+            button_y + 19,
+            start=30,
+            extent=120,
+            outline="#ffffff",
+            width=2,
+            style=tk.ARC,
+            tags="start_button",
+        )
+        self.create_text(
+            start_x + (2 if start_pressed else 1),
+            button_y + (2 if start_pressed else 1),
+            text="▶",
+            font=("Helvetica", 20, "bold"),
+            fill="#202020",
+            tags="start_button",
+        )
 
+        stop_pressed = self.pressed_tag == "stop_button"
         self.create_oval(
             stop_x - 24,
             button_y - 24,
             stop_x + 24,
             button_y + 24,
-            fill="#eeeeee",
+            fill="#ead8d8" if stop_pressed else "#eeeeee",
             outline="#7d7d7d",
             width=2,
             tags="stop_button",
         )
-        self.create_text(stop_x, button_y, text="■", font=("Helvetica", 18, "bold"), fill="#202020", tags="stop_button")
+        self.create_arc(
+            stop_x - 19,
+            button_y - 19,
+            stop_x + 19,
+            button_y + 19,
+            start=30,
+            extent=120,
+            outline="#ffffff",
+            width=2,
+            style=tk.ARC,
+            tags="stop_button",
+        )
+        self.create_rectangle(
+            stop_x - 8 + (1 if stop_pressed else 0),
+            button_y - 8 + (1 if stop_pressed else 0),
+            stop_x + 8 + (1 if stop_pressed else 0),
+            button_y + 8 + (1 if stop_pressed else 0),
+            fill="#202020",
+            outline="#202020",
+            tags="stop_button",
+        )
 
         draw_rounded_rect(
             self,
@@ -388,39 +470,50 @@ class ITunesHeader(tk.Canvas):
             width=2,
             tags="display",
         )
-        self.create_text(display_x + display_w // 2, 48, text="Music Tool", font=("Helvetica", 12, "bold"), fill="#1b1b1b")
+        self.create_text(display_x + display_w // 2, 48, text="Music Tool", font=("Helvetica", 13, "bold"), fill="#1b1b1b")
         self.create_text(
             display_x + display_w // 2,
             64,
             text=self.status_var.get(),
-            font=("Helvetica", 11),
+            font=("Helvetica", 12),
             fill="#1b1b1b",
         )
-        self.create_rectangle(display_x + 72, 70, display_x + display_w - 72, 74, fill="#e9edcf", outline="#575c4d")
-        self.create_rectangle(display_x + 72, 70, display_x + 120, 74, fill="#303030", outline="")
+        progress_x1 = display_x + 72
+        progress_x2 = display_x + display_w - 72
+        progress_y1 = 70
+        progress_y2 = 75
+        try:
+            progress = max(0.0, min(1.0, float(self.progress_var.get())))
+        except (tk.TclError, ValueError):
+            progress = 0.0
+        progress_end = progress_x1 + int((progress_x2 - progress_x1) * progress)
+        self.create_rectangle(progress_x1, progress_y1, progress_x2, progress_y2, fill="#e9edcf", outline="#575c4d")
+        if progress > 0:
+            self.create_rectangle(progress_x1, progress_y1, progress_end, progress_y2, fill="#303030", outline="")
 
         search_x = width - 248
+        diagnostic_pressed = self.pressed_tag == "diagnostics_button"
         draw_rounded_rect(
             self,
             search_x,
-            36,
+            34,
             search_x + 192,
-            66,
-            16,
-            fill="#f7f7f7",
-            outline="#8d8d8d",
+            72,
+            19,
+            fill="#cfe7c8" if not diagnostic_pressed else "#b9dcae",
+            outline="#6f9366",
             width=2,
             tags="diagnostics_button",
         )
+        self.create_text(search_x + 46, 57, text="✓", font=("Helvetica", 16, "bold"), fill="#2f6e2c", tags="diagnostics_button")
         self.create_text(
-            search_x + 96,
-            56,
+            search_x + 108,
+            58,
             text="Diagnóstico",
             font=("Helvetica", 12, "bold"),
-            fill="#202020",
+            fill="#173317",
             tags="diagnostics_button",
         )
-        self.create_text(search_x + 96, 82, text="Comprobar sistema", font=("Helvetica", 10), fill="#202020")
 
 
 class MusicToolApp(Tk):
@@ -436,6 +529,7 @@ class MusicToolApp(Tk):
         self.quality = StringVar(value="320k")
         self.overwrite = BooleanVar(value=False)
         self.status = StringVar(value="Listo")
+        self.progress = DoubleVar(value=0.0)
         self.is_converting = False
         self.cancel_requested = threading.Event()
         self.current_process = None
@@ -489,7 +583,7 @@ class MusicToolApp(Tk):
         root.rowconfigure(1, weight=1)
         root.columnconfigure(0, weight=1)
 
-        self.header = ITunesHeader(root, self.status, self.start_conversion, self.cancel_conversion, self.show_diagnostics)
+        self.header = ITunesHeader(root, self.status, self.progress, self.start_conversion, self.cancel_conversion, self.show_diagnostics)
         self.header.grid(row=0, column=0, sticky="ew", pady=(0, 8))
 
         notebook = ttk.Notebook(root)
@@ -521,9 +615,8 @@ class MusicToolApp(Tk):
         controls.grid(row=0, column=0, sticky="ew", padx=4, pady=(4, 8))
         controls.columnconfigure(0, weight=1)
         controls.columnconfigure(1, weight=1)
-        controls.columnconfigure(2, weight=1)
 
-        songs_panel = RoundedSection(controls, "1. Canciones", min_height=190)
+        songs_panel = RoundedSection(controls, "1. Canciones", min_height=210)
         songs_panel.grid(row=0, column=0, sticky="nsew", padx=(0, 8))
         songs = songs_panel.content
         songs.columnconfigure(0, weight=1)
@@ -533,8 +626,8 @@ class MusicToolApp(Tk):
         )
         ttk.Button(songs, text="Vaciar lista", command=self.clear_files).grid(row=2, column=0, sticky="ew", padx=4, pady=4)
 
-        output_panel = RoundedSection(controls, "2. Salida", min_height=190)
-        output_panel.grid(row=0, column=1, sticky="nsew", padx=8)
+        output_panel = RoundedSection(controls, "2. Salida", min_height=210)
+        output_panel.grid(row=0, column=1, sticky="nsew", padx=(8, 0))
         output = output_panel.content
         output.columnconfigure(1, weight=1)
         ttk.Button(output, text="Seleccionar carpeta", command=self.choose_output_dir).grid(
@@ -556,17 +649,6 @@ class MusicToolApp(Tk):
         ttk.Checkbutton(output, text="Sobrescribir existentes", variable=self.overwrite).grid(
             row=3, column=0, columnspan=2, sticky="w", padx=4, pady=4
         )
-
-        process_panel = RoundedSection(controls, "3. Proceso", min_height=190)
-        process_panel.grid(row=0, column=2, sticky="nsew", padx=(8, 0))
-        process = process_panel.content
-        process.columnconfigure(0, weight=1)
-        ttk.Button(process, text="▶", command=self.start_conversion, width=4).grid(
-            row=0, column=0, sticky="ew", padx=4, pady=4
-        )
-        ttk.Button(process, text="■", command=self.cancel_conversion, width=4).grid(row=1, column=0, sticky="ew", padx=4, pady=4)
-        ttk.Label(process, text="Estado").grid(row=2, column=0, sticky="w", padx=4, pady=(10, 2))
-        ttk.Label(process, textvariable=self.status, anchor=tk.W).grid(row=3, column=0, sticky="ew", padx=4, pady=2)
 
         self.output_label = ttk.Label(self.conversion_tab, text="Carpeta de salida: sin seleccionar", anchor=tk.W)
         self.output_label.grid(row=2, column=0, sticky="ew", padx=8, pady=(6, 0))
@@ -1178,6 +1260,7 @@ class MusicToolApp(Tk):
         self.cancel_requested.clear()
         self.is_exporting_editor = True
         self.set_status("Exportando canción editada...")
+        self.set_progress(0.15)
         threading.Thread(target=self.export_editor_song, daemon=True).start()
 
     def _validate_editor_export_options(self) -> None:
@@ -1242,6 +1325,7 @@ class MusicToolApp(Tk):
 
         self.log_message(f"Tamaño final: {format_size(output)}")
         self.log_message("Canción editada exportada correctamente.")
+        self.after(0, lambda: self.set_progress(1.0))
         self.after(0, lambda: self.set_status("Canción editada exportada"))
         self.after(0, self._finish_editor_export)
 
@@ -1327,6 +1411,7 @@ class MusicToolApp(Tk):
 
     def _handle_editor_export_error(self, message: str) -> None:
         self.log_message(f"Error exportando canción: {message}")
+        self.set_progress(0.0)
         self.set_status("Error exportando canción")
         self._finish_editor_export()
         messagebox.showerror(APP_NAME, message)
@@ -1353,6 +1438,7 @@ class MusicToolApp(Tk):
         self.cancel_requested.clear()
         self.is_generating_waveform = True
         self.set_status("Generando forma de onda...")
+        self.set_progress(0.25)
         if self.waveform_label:
             self.waveform_label.configure(text="Generando forma de onda...", image="")
         threading.Thread(target=self.generate_waveform, daemon=True).start()
@@ -1411,12 +1497,14 @@ class MusicToolApp(Tk):
         if self.waveform_label:
             self.waveform_label.configure(image=self.waveform_photo, text="")
         self.is_generating_waveform = False
+        self.set_progress(1.0)
         self.set_status("Forma de onda generada")
 
     def _finish_waveform_cancel(self) -> None:
         if self.waveform_label:
             self.waveform_label.configure(text="Forma de onda cancelada", image="")
         self.is_generating_waveform = False
+        self.set_progress(0.0)
         self.set_status("Forma de onda cancelada")
 
     def _handle_waveform_error(self, message: str) -> None:
@@ -1424,6 +1512,7 @@ class MusicToolApp(Tk):
         if self.waveform_label:
             self.waveform_label.configure(text="No se pudo generar la forma de onda", image="")
         self.is_generating_waveform = False
+        self.set_progress(0.0)
         self.set_status("Error generando forma de onda")
         messagebox.showerror(APP_NAME, message)
 
@@ -1459,6 +1548,7 @@ class MusicToolApp(Tk):
         self.cancel_requested.clear()
         self.is_extracting_url = True
         self.set_status("Extrayendo audio desde URL...")
+        self.set_progress(0.15)
         self._clear_url_results()
         self._add_url_status("Procesando URL...", "En curso")
         threading.Thread(target=self.extract_url_audio, daemon=True).start()
@@ -1474,6 +1564,7 @@ class MusicToolApp(Tk):
         self.log_message(f"URL: {url}")
         self.log_message("Modo: extraer la mejor pista de audio disponible sin forzar recodificación")
         self.log_message(f"Carpeta de salida: {output_dir}")
+        self.after(0, lambda: self.set_progress(0.35))
 
         try:
             process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
@@ -1498,6 +1589,7 @@ class MusicToolApp(Tk):
 
         after_files = self._audio_files_in_folder(output_dir)
         generated = sorted(after_files - before_files)
+        finished_status = "Audio extraído correctamente"
         if generated:
             self.log_message("Archivos generados:")
             for path in generated:
@@ -1508,8 +1600,12 @@ class MusicToolApp(Tk):
             self.after(0, lambda: self._add_url_status("Sin archivos nuevos detectados", "Finalizado"))
             if stdout.strip():
                 self.log_message(stdout.strip())
+            if stderr.strip():
+                self.log_message(stderr.strip())
+            finished_status = "Extracción finalizada sin archivos nuevos"
 
-        self.after(0, lambda: self.set_status("Audio extraído correctamente"))
+        self.after(0, lambda: self.set_progress(1.0))
+        self.after(0, lambda status=finished_status: self.set_status(status))
         self.after(0, self._finish_url_extraction)
 
     def _build_url_extraction_command(self, url: str, output_dir: Path) -> list[str]:
@@ -1520,10 +1616,14 @@ class MusicToolApp(Tk):
         output_template = str(output_dir / "%(title)s [%(id)s].%(ext)s")
         command = [
             yt_dlp,
+            "-f",
+            "bestaudio/best",
             "-x",
             "--no-overwrites",
+            "--restrict-filenames",
             "--embed-metadata",
             "--add-metadata",
+            "--ignore-errors",
             "--ffmpeg-location",
             str(Path(ffmpeg).parent),
             "-o",
@@ -1561,6 +1661,7 @@ class MusicToolApp(Tk):
 
     def _handle_url_error(self, message: str) -> None:
         self.log_message(f"Error extrayendo URL: {message}")
+        self.set_progress(0.0)
         self.set_status("Error extrayendo URL")
         self._finish_url_extraction()
         messagebox.showerror(APP_NAME, message)
@@ -1589,6 +1690,7 @@ class MusicToolApp(Tk):
         self.cancel_requested.clear()
         self.is_converting = True
         self.set_status("Convirtiendo canciones...")
+        self.set_progress(0.0)
         threading.Thread(target=self.convert_files, daemon=True).start()
 
     def cancel_conversion(self) -> None:
@@ -1610,6 +1712,7 @@ class MusicToolApp(Tk):
                 self.log_message(f"No se pudo detener el proceso: {exc}")
         self.log_message("Cancelación solicitada.")
         self.set_status("Cancelando proceso...")
+        self.set_progress(0.0)
 
     def convert_files(self) -> None:
         try:
@@ -1617,19 +1720,26 @@ class MusicToolApp(Tk):
             self.log_message(f"Formato de salida: {self.output_format.get()}")
             self.log_message(f"Calidad: {self.quality.get()}")
 
-            for path in list(self.files):
+            files = list(self.files)
+            total = max(1, len(files))
+            for index, path in enumerate(files):
                 if self.cancel_requested.is_set():
                     self.log_message("Conversión cancelada por el usuario.")
+                    self.after(0, lambda: self.set_progress(0.0))
                     self.after(0, lambda: self.set_status("Conversión cancelada"))
                     return
+                self.after(0, lambda value=index / total: self.set_progress(value))
                 self.convert_one_file(path)
+                self.after(0, lambda value=(index + 1) / total: self.set_progress(value))
 
             if self.cancel_requested.is_set():
                 self.log_message("Conversión cancelada por el usuario.")
+                self.after(0, lambda: self.set_progress(0.0))
                 self.after(0, lambda: self.set_status("Conversión cancelada"))
                 return
 
             self.log_message("Conversión finalizada.")
+            self.after(0, lambda: self.set_progress(1.0))
             self.after(0, lambda: self.set_status("Conversión finalizada"))
         finally:
             self.after(0, self._finish_conversion)
@@ -1749,8 +1859,12 @@ class MusicToolApp(Tk):
     def set_status(self, message: str) -> None:
         self.status.set(message)
 
+    def set_progress(self, value: float) -> None:
+        self.progress.set(max(0.0, min(1.0, value)))
+
     def show_error(self, message: str) -> None:
         self.log_message(f"Error: {message}")
+        self.set_progress(0.0)
         self.set_status("Error")
         messagebox.showerror(APP_NAME, message)
 
