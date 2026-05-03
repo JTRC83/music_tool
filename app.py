@@ -5,8 +5,10 @@ from __future__ import annotations
 
 import os
 import json
+import platform
 import shutil
 import subprocess
+import sys
 import threading
 from pathlib import Path
 from tkinter import BooleanVar, StringVar, Tk, filedialog, messagebox
@@ -310,19 +312,24 @@ class ITunesHeader(tk.Canvas):
         status_var: StringVar,
         start_command: object,
         stop_command: object,
+        diagnostics_command: object,
     ) -> None:
         super().__init__(master, height=92, bg=METAL_BG, highlightthickness=0, bd=0)
         self.status_var = status_var
         self.start_command = start_command
         self.stop_command = stop_command
+        self.diagnostics_command = diagnostics_command
         self.status_var.trace_add("write", self._status_changed)
         self.bind("<Configure>", self._redraw)
         self.tag_bind("start_button", "<Button-1>", lambda _event: self.start_command())
         self.tag_bind("stop_button", "<Button-1>", lambda _event: self.stop_command())
+        self.tag_bind("diagnostics_button", "<Button-1>", lambda _event: self.diagnostics_command())
         self.tag_bind("start_button", "<Enter>", lambda _event: self.configure(cursor="pointinghand"))
         self.tag_bind("stop_button", "<Enter>", lambda _event: self.configure(cursor="pointinghand"))
+        self.tag_bind("diagnostics_button", "<Enter>", lambda _event: self.configure(cursor="pointinghand"))
         self.tag_bind("start_button", "<Leave>", lambda _event: self.configure(cursor=""))
         self.tag_bind("stop_button", "<Leave>", lambda _event: self.configure(cursor=""))
+        self.tag_bind("diagnostics_button", "<Leave>", lambda _event: self.configure(cursor=""))
 
     def _status_changed(self, *_args: object) -> None:
         self._paint(max(self.winfo_width(), 620))
@@ -392,20 +399,28 @@ class ITunesHeader(tk.Canvas):
         self.create_rectangle(display_x + 72, 70, display_x + display_w - 72, 74, fill="#e9edcf", outline="#575c4d")
         self.create_rectangle(display_x + 72, 70, display_x + 120, 74, fill="#303030", outline="")
 
-        search_x = width - 218
+        search_x = width - 238
         draw_rounded_rect(
             self,
             search_x,
             36,
-            search_x + 150,
+            search_x + 180,
             62,
             13,
             fill="#f7f7f7",
             outline="#8d8d8d",
             width=2,
-            tags="search",
+            tags="diagnostics_button",
         )
-        self.create_text(search_x + 75, 80, text="Search", font=("Helvetica", 10), fill="#202020")
+        self.create_text(
+            search_x + 90,
+            54,
+            text="Diagnóstico",
+            font=("Helvetica", 12, "bold"),
+            fill="#202020",
+            tags="diagnostics_button",
+        )
+        self.create_text(search_x + 90, 80, text="Comprobar sistema", font=("Helvetica", 10), fill="#202020")
 
 
 class MusicToolApp(Tk):
@@ -474,7 +489,7 @@ class MusicToolApp(Tk):
         root.rowconfigure(1, weight=1)
         root.columnconfigure(0, weight=1)
 
-        self.header = ITunesHeader(root, self.status, self.start_conversion, self.cancel_conversion)
+        self.header = ITunesHeader(root, self.status, self.start_conversion, self.cancel_conversion, self.show_diagnostics)
         self.header.grid(row=0, column=0, sticky="ew", pady=(0, 8))
 
         notebook = ttk.Notebook(root)
@@ -613,6 +628,65 @@ class MusicToolApp(Tk):
         self.log.configure(yscrollcommand=log_scrollbar.set)
         self.log.grid(row=0, column=0, sticky="nsew")
         log_scrollbar.grid(row=0, column=1, sticky="ns")
+
+    def show_diagnostics(self) -> None:
+        lines = self._build_diagnostics_report()
+        report = "\n".join(lines)
+        self.log_message("")
+        self.log_message("=== Diagnóstico del sistema ===")
+        for line in lines:
+            self.log_message(line)
+        self.set_status("Diagnóstico completado")
+        messagebox.showinfo("Diagnóstico de Music Tool", report)
+
+    def _build_diagnostics_report(self) -> list[str]:
+        app_dir = base_path()
+        bin_dir = app_dir / "bin"
+        command_file = app_dir / "abrir_music_tool.command"
+        lines = [
+            f"Python: OK - {platform.python_version()}",
+            f"Ejecutable Python: {sys.executable}",
+            f"Tkinter: OK - Tk {tk.TkVersion} / Tcl {tk.TclVersion}",
+            f"macOS / sistema: {platform.platform()}",
+            f"Carpeta app: {'OK' if app_dir.exists() else 'FALTA'} - {app_dir}",
+            f"Carpeta bin: {'OK' if bin_dir.exists() else 'FALTA'} - {bin_dir}",
+            f"Permiso escritura app: {'OK' if os.access(app_dir, os.W_OK) else 'SIN PERMISO'}",
+            f"Lanzador .command: {self._file_status(command_file)}",
+        ]
+        for name in ("ffmpeg", "ffprobe", "yt-dlp"):
+            lines.extend(self._binary_diagnostics(name))
+        return lines
+
+    def _file_status(self, path: Path) -> str:
+        if not path.exists():
+            return f"FALTA - {path}"
+        if not os.access(path, os.X_OK):
+            return f"SIN PERMISO - {path}"
+        return f"OK - {path}"
+
+    def _binary_diagnostics(self, name: str) -> list[str]:
+        path = find_binary(name)
+        if not path:
+            return [f"{name}: FALTA - añade {name} a bin/ o al PATH"]
+
+        binary_path = Path(path)
+        location = "bin" if binary_path.parent == base_path() / "bin" else "PATH"
+        if not os.access(path, os.X_OK):
+            return [f"{name}: SIN PERMISO - {path}", f"{name}: ejecuta chmod +x {path}"]
+
+        version = self._binary_version(name, path)
+        return [f"{name}: OK ({location}) - {path}", f"{name} versión: {version}"]
+
+    def _binary_version(self, name: str, path: str) -> str:
+        command = [path, "--version"] if name == "yt-dlp" else [path, "-version"]
+        try:
+            result = subprocess.run(command, capture_output=True, text=True, timeout=5)
+        except (OSError, subprocess.TimeoutExpired) as exc:
+            return f"no se pudo leer ({exc})"
+        first_line = (result.stdout or result.stderr).splitlines()
+        if not first_line:
+            return "sin salida de versión"
+        return first_line[0][:160]
 
     def _build_editor_tab(self) -> None:
         self.editor_tab.columnconfigure(0, weight=1)

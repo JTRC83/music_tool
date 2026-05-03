@@ -152,8 +152,9 @@
 <text x="506" y="75" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#1b1b1b">Listo</text>
 <rect x="420" y="82" width="280" height="7" rx="1" fill="#edf0d5" stroke="#4f5447"/>
 <rect x="420" y="82" width="46" height="7" rx="1" fill="#2f2f2f" stroke="#2f2f2f"/>
-<rect x="888" y="47" width="140" height="32" rx="18" fill="#f9f9f9" stroke="#8f8f8f"/>
-<text x="934" y="97" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#202020">Search</text>
+<rect x="858" y="47" width="180" height="32" rx="18" fill="#f9f9f9" stroke="#8f8f8f"/>
+<text x="906" y="68" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#202020">Diagnostico</text>
+<text x="902" y="97" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#202020">Comprobar sistema</text>
 <rect x="42" y="112" width="1036" height="38" rx="14" fill="#d4d4d4" stroke="#8d8d8d"/>
 <text x="76" y="136" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="13" font-weight="500" fill="#444">Conversion</text>
 <text x="216" y="136" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="13" font-weight="500" fill="#444">Editor de cancion</text>

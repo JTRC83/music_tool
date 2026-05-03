@@ -95,8 +95,9 @@ def chrome(active: str) -> list[str]:
         text(506, 75, "Listo", 12, "400", "#1b1b1b"),
         rect(420, 82, 280, 7, "#edf0d5", "#4f5447", 1),
         rect(420, 82, 46, 7, "#2f2f2f", "#2f2f2f", 1),
-        rect(888, 47, 140, 32, "#f9f9f9", "#8f8f8f", 18),
-        text(934, 97, "Search", 12, "400", "#202020"),
+        rect(858, 47, 180, 32, "#f9f9f9", "#8f8f8f", 18),
+        text(906, 68, "Diagnostico", 12, "700", "#202020"),
+        text(902, 97, "Comprobar sistema", 12, "400", "#202020"),
         rect(42, 112, 1036, 38, "#d4d4d4", "#8d8d8d", 14),
     ]
     for key, label, x, w in tabs:
