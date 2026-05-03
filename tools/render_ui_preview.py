@@ -36,17 +36,25 @@ def button(x: int, y: int, w: int, label: str, center: bool = False) -> str:
     tx = x + (w // 2) - 5 if center else x + 12
     return "\n".join(
         [
-            rect(x, y, w, 30, "#f9f9f9", "#8f8f8f", 14),
-            text(tx, y + 20, label, 14 if center else 13, "700" if center else "500", "#222"),
+            rect(x, y, w, 40, "#f2f2f2", "#8f8f8f", 20),
+            text(tx, y + 25, label, 14 if center else 13, "700" if center else "500", "#222"),
         ]
     )
 
 
-def action_button(x: int, y: int, w: int, label: str, fill: str = "#d7ead2", stroke: str = "#6f9366") -> str:
+def action_button(
+    x: int,
+    y: int,
+    w: int,
+    label: str,
+    fill: str = "#d7ead2",
+    stroke: str = "#6f9366",
+    color: str = "#173317",
+) -> str:
     return "\n".join(
         [
-            rect(x, y, w, 30, fill, stroke, 15),
-            text(x + 16, y + 20, label, 12, "700", "#173317"),
+            rect(x, y, w, 40, fill, stroke, 20),
+            text(x + w // 2 - (len(label) * 3), y + 25, label, 12, "700", color),
         ]
     )
 
@@ -106,12 +114,11 @@ def chrome(active: str) -> list[str]:
         rect(0, 0, WIDTH, HEIGHT, "url(#metal)", "#a0a0a0", 0),
         *[f'<line x1="0" y1="{y}" x2="{WIDTH}" y2="{y}" stroke="#eeeeee" opacity="0.28"/>' for y in range(3, HEIGHT, 6)],
         text(532, 28, "Music Tool", 18, "700", "#111111"),
-        '<circle cx="212" cy="54" r="25" fill="#f2f2f2" stroke="#7d7d7d" stroke-width="2"/>',
-        '<rect x="193" y="39" width="38" height="30" rx="10" fill="#d9dec0" stroke="#6e7562"/>',
+        '<rect x="182" y="30" width="60" height="48" rx="20" fill="#f7f7f7" stroke="#7d7d7d" stroke-width="2"/>',
+        '<rect x="188" y="36" width="48" height="36" rx="16" fill="#d9dec0" stroke="#6e7562"/>',
         '<path d="M198 41 A20 20 0 0 1 226 43" fill="none" stroke="#ffffff" stroke-width="2"/>',
-        text(199, 59, "M", 13, "700", "#25301f"),
-        text(216, 59, "T", 13, "700", "#25301f"),
-        '<line x1="211" y1="44" x2="211" y2="64" stroke="#778066"/>',
+        text(202, 54, "MT", 14, "700", "#25301f"),
+        text(198, 68, "audio", 7, "700", "#47503c"),
         round_header_button(284, 54, "▶"),
         '<circle cx="348" cy="54" r="24" fill="url(#buttonChrome)" stroke="#7f7f7f" stroke-width="2"/>',
         '<rect x="340" y="46" width="16" height="16" rx="2" fill="#202020"/>',
@@ -119,8 +126,8 @@ def chrome(active: str) -> list[str]:
         text(506, 58, "Listo", 13, "700", "#1b1b1b"),
         rect(420, 72, 280, 7, "#edf0d5", "#4f5447", 1),
         rect(420, 72, 112, 7, "#2f2f2f", "#2f2f2f", 1),
-        rect(920, 42, 118, 30, "#cfe7c8", "#6f9366", 15),
-        text(948, 62, "Diagnostico", 11, "700", "#173317"),
+        rect(906, 34, 132, 40, "#cfe7c8", "#6f9366", 20),
+        text(934, 59, "Diagnostico", 11, "700", "#173317"),
         rect(42, 112, 1036, 38, "#d4d4d4", "#8d8d8d", 14),
     ]
     for key, label, x, w in tabs:
@@ -165,16 +172,16 @@ def render_conversion() -> str:
     parts = chrome("conversion")
     parts += [
         group(174, 168, 340, 185, "1. Canciones"),
-        button(194, 198, 280, "Anadir canciones"),
-        button(194, 236, 280, "Quitar seleccionado"),
-        button(194, 274, 280, "Vaciar lista"),
+        action_button(194, 198, 280, "Anadir canciones", "#3667e8", "#1d47af", "#ffffff"),
+        action_button(194, 244, 280, "Quitar seleccionado", "#f2f2f2", "#8f8f8f", "#303030"),
+        action_button(194, 290, 280, "Vaciar lista", "#f2f2f2", "#8f8f8f", "#303030"),
         group(534, 168, 390, 185, "2. Salida"),
-        button(554, 198, 270, "Seleccionar carpeta"),
-        text(554, 246, "Formato", 12, "500"),
-        field(636, 226, 170, "MP3"),
-        text(554, 282, "Calidad", 12, "500"),
-        field(636, 262, 170, "320k"),
-        text(554, 318, "Sobrescribir existentes", 12, "400"),
+        action_button(554, 198, 270, "Seleccionar carpeta", "#3667e8", "#1d47af", "#ffffff"),
+        text(554, 256, "Formato", 12, "500"),
+        field(636, 236, 170, "MP3"),
+        text(554, 292, "Calidad", 12, "500"),
+        field(636, 272, 170, "320k"),
+        text(554, 328, "Sobrescribir existentes", 12, "400"),
         table(42, 380, 1036, 196),
         text(50, 606, "Carpeta de salida: sin seleccionar", 12, "400", "#3b3b3b"),
         *log_and_status(),
@@ -187,7 +194,7 @@ def render_editor() -> str:
     parts = chrome("editor")
     parts += [
         group(42, 168, 1036, 84, "1. Cancion"),
-        button(62, 196, 132, "Cargar cancion"),
+        action_button(62, 196, 160, "Cargar cancion", "#3667e8", "#1d47af", "#ffffff"),
         text(220, 216, "song_01.flac", 13, "500"),
         text(62, 238, "Duracion: 4:01 | Peso: 35.4 MB | Bitrate: 911 kbps", 12, "400", "#3b3b3b"),
         group(42, 276, 500, 292, "2. Metadatos"),
@@ -230,9 +237,9 @@ def edit_fields(x: int, y: int) -> list[str]:
         yy = y + (index * 32)
         parts.append(text(x, yy + 19, label, 12, "500"))
         parts.append(field(x + 120, yy, 132, value))
-    parts.append(action_button(x + 286, y, 160, "Seleccionar", "#f2f2f2", "#8f8f8f"))
-    parts.append(action_button(x + 286, y + 42, 160, "Generar forma", "#d8e8fb", "#7da8d6"))
-    parts.append(action_button(x + 286, y + 84, 160, "Exportar", "#d7ead2", "#6f9366"))
+    parts.append(action_button(x + 286, y, 180, "Seleccionar", "#f2f2f2", "#8f8f8f", "#303030"))
+    parts.append(action_button(x + 286, y + 46, 180, "Generar forma", "#3667e8", "#1d47af", "#ffffff"))
+    parts.append(action_button(x + 286, y + 92, 180, "Exportar", "#d7ead2", "#6f9366", "#173317"))
     return parts
 
 
@@ -252,9 +259,9 @@ def render_url() -> str:
         text(66, 218, "URL", 12, "500"),
         field(122, 198, 910, "https://www.youtube.com/watch?v=..."),
         group(42, 282, 1036, 160, "2. Extraccion de audio"),
-        button(66, 312, 170, "Seleccionar carpeta"),
+        action_button(66, 312, 190, "Seleccionar carpeta", "#3667e8", "#1d47af", "#ffffff"),
         text(260, 332, "/Users/JoanToni/Music/Descargas", 12, "400", "#3b3b3b"),
-        action_button(66, 364, 140, "Extraer MP3"),
+        action_button(66, 364, 150, "Extraer MP3"),
         group(42, 468, 1036, 136, "Resultados"),
         rect(64, 500, 992, 32, "url(#tableHeader)", "#8f8f8f", 14),
         text(82, 521, "Archivo", 12, "600", "#333"),
