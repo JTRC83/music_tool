@@ -407,18 +407,21 @@ class ITunesHeader(tk.Canvas):
             button_y - 25,
             logo_x + 25,
             button_y + 25,
-            fill="#f7f7f7",
+            fill="#f2f2f2",
             outline="#7d7d7d",
             width=2,
         )
-        self.create_oval(
-            logo_x - 18,
-            button_y - 18,
-            logo_x + 18,
-            button_y + 18,
+        draw_rounded_rect(
+            self,
+            logo_x - 19,
+            button_y - 15,
+            logo_x + 19,
+            button_y + 15,
+            10,
             fill="#d9dec0",
             outline="#6e7562",
             width=1,
+            tags="logo",
         )
         self.create_arc(
             logo_x - 21,
@@ -431,11 +434,9 @@ class ITunesHeader(tk.Canvas):
             width=2,
             style=tk.ARC,
         )
-        self.create_line(logo_x - 7, button_y + 7, logo_x - 7, button_y - 9, fill="#25301f", width=2)
-        self.create_line(logo_x - 7, button_y - 9, logo_x + 7, button_y - 12, fill="#25301f", width=2)
-        self.create_line(logo_x + 7, button_y - 12, logo_x + 7, button_y + 3, fill="#25301f", width=2)
-        self.create_oval(logo_x - 14, button_y + 3, logo_x - 5, button_y + 12, fill="#25301f", outline="#25301f")
-        self.create_oval(logo_x, button_y - 1, logo_x + 9, button_y + 8, fill="#25301f", outline="#25301f")
+        self.create_text(logo_x - 6, button_y + 1, text="M", font=("Helvetica", 13, "bold"), fill="#25301f")
+        self.create_text(logo_x + 9, button_y + 1, text="T", font=("Helvetica", 13, "bold"), fill="#25301f")
+        self.create_line(logo_x - 1, button_y - 10, logo_x - 1, button_y + 10, fill="#778066")
 
         start_pressed = self.pressed_tag == "start_button"
         self.create_oval(
@@ -534,26 +535,25 @@ class ITunesHeader(tk.Canvas):
         if progress > 0:
             self.create_rectangle(progress_x1, progress_y1, progress_end, progress_y2, fill="#303030", outline="")
 
-        search_w = 150
+        search_w = 118
         search_x = width - search_w - 56
-        self.button_bounds["diagnostics_button"] = (search_x, 36, search_x + search_w, 70)
+        self.button_bounds["diagnostics_button"] = (search_x, 39, search_x + search_w, 69)
         diagnostic_pressed = self.pressed_tag == "diagnostics_button"
         draw_rounded_rect(
             self,
             search_x,
-            36,
+            39,
             search_x + search_w,
-            70,
-            17,
+            69,
+            15,
             fill="#cfe7c8" if not diagnostic_pressed else "#b9dcae",
             outline="#6f9366",
             width=2,
             tags="diagnostics_button",
         )
-        self.create_text(search_x + 34, 56, text="✓", font=("Helvetica", 14, "bold"), fill="#2f6e2c", tags="diagnostics_button")
         self.create_text(
-            search_x + 90,
-            57,
+            search_x + search_w // 2,
+            56,
             text="Diagnóstico",
             font=("Helvetica", 11, "bold"),
             fill="#173317",
@@ -620,6 +620,39 @@ class MusicToolApp(Tk):
         style.configure("TNotebook.Tab", padding=(16, 6))
         style.configure("Treeview", rowheight=24, fieldbackground="#ffffff", background="#ffffff")
         style.configure("Treeview.Heading", font=("Helvetica", 11, "bold"))
+
+    def _action_button(
+        self,
+        master: tk.Widget,
+        text: str,
+        command: object,
+        *,
+        width: int = 18,
+        tone: str = "blue",
+    ) -> tk.Button:
+        colors = {
+            "blue": ("#d8e8fb", "#b9d5f3", "#285d8f"),
+            "green": ("#d7ead2", "#bdddb6", "#2f6430"),
+            "silver": ("#f2f2f2", "#dedede", "#303030"),
+        }
+        bg, active_bg, fg = colors.get(tone, colors["blue"])
+        return tk.Button(
+            master,
+            text=text,
+            command=command,
+            width=width,
+            bg=bg,
+            activebackground=active_bg,
+            fg=fg,
+            activeforeground=fg,
+            relief=tk.RAISED,
+            overrelief=tk.GROOVE,
+            bd=1,
+            padx=10,
+            pady=3,
+            font=("Helvetica", 11, "bold"),
+            cursor="pointinghand",
+        )
 
     def _build_ui(self) -> None:
         self.configure(bg=METAL_BG)
@@ -892,6 +925,7 @@ class MusicToolApp(Tk):
         edits_panel.grid(row=1, column=1, sticky="nsew", padx=(8, 4), pady=4)
         edits = edits_panel.content
         edits.columnconfigure(1, weight=1)
+        edits.columnconfigure(2, weight=0)
         self.editor_start = StringVar(value="")
         self.editor_end = StringVar(value="")
         self.editor_fade_in = StringVar(value="")
@@ -916,20 +950,20 @@ class MusicToolApp(Tk):
         ttk.Combobox(edits, textvariable=self.editor_quality, values=MP3_QUALITIES, width=10, state="readonly").grid(
             row=6, column=1, sticky="ew", padx=4, pady=4
         )
-        ttk.Button(edits, text="Seleccionar carpeta", command=self.choose_editor_output_dir).grid(
-            row=7, column=0, columnspan=2, sticky="ew", padx=4, pady=(14, 4)
+        self._action_button(edits, "Seleccionar carpeta", self.choose_editor_output_dir, width=18, tone="silver").grid(
+            row=0, column=2, sticky="e", padx=(14, 4), pady=4
+        )
+        self._action_button(edits, "Generar forma", self.start_waveform_generation, width=18, tone="blue").grid(
+            row=1, column=2, sticky="e", padx=(14, 4), pady=4
+        )
+        self._action_button(edits, "Exportar editada", self.start_editor_export, width=18, tone="green").grid(
+            row=2, column=2, sticky="e", padx=(14, 4), pady=4
         )
         ttk.Checkbutton(edits, text="Sobrescribir", variable=self.editor_overwrite).grid(
-            row=8, column=0, columnspan=2, sticky="w", padx=4, pady=4
-        )
-        ttk.Button(edits, text="Generar forma de onda", command=self.start_waveform_generation).grid(
-            row=9, column=0, columnspan=2, sticky="ew", padx=4, pady=(14, 4)
-        )
-        ttk.Button(edits, text="Exportar canción editada", command=self.start_editor_export).grid(
-            row=10, column=0, columnspan=2, sticky="ew", padx=4, pady=4
+            row=7, column=0, columnspan=2, sticky="w", padx=4, pady=(14, 4)
         )
         ttk.Label(edits, textvariable=self.editor_output_dir, anchor=tk.W).grid(
-            row=11, column=0, columnspan=2, sticky="ew", padx=4, pady=(8, 4)
+            row=8, column=0, columnspan=3, sticky="ew", padx=4, pady=(8, 4)
         )
 
         waveform_panel = RoundedSection(self.editor_tab, "Edición visual", min_height=360)
@@ -969,8 +1003,8 @@ class MusicToolApp(Tk):
         )
         self.url_output_label = ttk.Label(options, text="Sin carpeta seleccionada", anchor=tk.W)
         self.url_output_label.grid(row=0, column=1, sticky="ew", padx=8, pady=4)
-        ttk.Button(options, text="Extraer audio", command=self.start_url_extraction).grid(
-            row=1, column=0, columnspan=2, sticky="ew", padx=4, pady=(12, 4)
+        self._action_button(options, "Extraer MP3", self.start_url_extraction, width=16, tone="green").grid(
+            row=1, column=0, sticky="w", padx=4, pady=(12, 4)
         )
 
         results_panel = RoundedSection(self.url_tab, "Resultados", min_height=210)

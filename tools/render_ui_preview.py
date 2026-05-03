@@ -42,6 +42,15 @@ def button(x: int, y: int, w: int, label: str, center: bool = False) -> str:
     )
 
 
+def action_button(x: int, y: int, w: int, label: str, fill: str = "#d7ead2", stroke: str = "#6f9366") -> str:
+    return "\n".join(
+        [
+            rect(x, y, w, 30, fill, stroke, 15),
+            text(x + 16, y + 20, label, 12, "700", "#173317"),
+        ]
+    )
+
+
 def field(x: int, y: int, w: int, label: str = "") -> str:
     return "\n".join(
         [
@@ -97,12 +106,12 @@ def chrome(active: str) -> list[str]:
         rect(0, 0, WIDTH, HEIGHT, "url(#metal)", "#a0a0a0", 0),
         *[f'<line x1="0" y1="{y}" x2="{WIDTH}" y2="{y}" stroke="#eeeeee" opacity="0.28"/>' for y in range(3, HEIGHT, 6)],
         text(532, 28, "Music Tool", 18, "700", "#111111"),
-        '<circle cx="212" cy="54" r="25" fill="#f7f7f7" stroke="#7d7d7d" stroke-width="2"/>',
-        '<circle cx="212" cy="54" r="18" fill="#d9dec0" stroke="#6e7562"/>',
+        '<circle cx="212" cy="54" r="25" fill="#f2f2f2" stroke="#7d7d7d" stroke-width="2"/>',
+        '<rect x="193" y="39" width="38" height="30" rx="10" fill="#d9dec0" stroke="#6e7562"/>',
         '<path d="M198 41 A20 20 0 0 1 226 43" fill="none" stroke="#ffffff" stroke-width="2"/>',
-        '<path d="M205 61 L205 45 L219 42 L219 57" fill="none" stroke="#25301f" stroke-width="2"/>',
-        '<ellipse cx="201" cy="65" rx="5" ry="4" fill="#25301f"/>',
-        '<ellipse cx="219" cy="60" rx="5" ry="4" fill="#25301f"/>',
+        text(199, 59, "M", 13, "700", "#25301f"),
+        text(216, 59, "T", 13, "700", "#25301f"),
+        '<line x1="211" y1="44" x2="211" y2="64" stroke="#778066"/>',
         round_header_button(284, 54, "▶"),
         '<circle cx="348" cy="54" r="24" fill="url(#buttonChrome)" stroke="#7f7f7f" stroke-width="2"/>',
         '<rect x="340" y="46" width="16" height="16" rx="2" fill="#202020"/>',
@@ -110,9 +119,8 @@ def chrome(active: str) -> list[str]:
         text(506, 58, "Listo", 13, "700", "#1b1b1b"),
         rect(420, 72, 280, 7, "#edf0d5", "#4f5447", 1),
         rect(420, 72, 112, 7, "#2f2f2f", "#2f2f2f", 1),
-        rect(888, 41, 150, 34, "#cfe7c8", "#6f9366", 17),
-        text(918, 63, "✓", 14, "700", "#2f6e2c"),
-        text(946, 63, "Diagnostico", 11, "700", "#173317"),
+        rect(920, 42, 118, 30, "#cfe7c8", "#6f9366", 15),
+        text(948, 62, "Diagnostico", 11, "700", "#173317"),
         rect(42, 112, 1036, 38, "#d4d4d4", "#8d8d8d", 14),
     ]
     for key, label, x, w in tabs:
@@ -222,9 +230,9 @@ def edit_fields(x: int, y: int) -> list[str]:
         yy = y + (index * 32)
         parts.append(text(x, yy + 19, label, 12, "500"))
         parts.append(field(x + 120, yy, 132, value))
-    parts.append(button(x + 286, y, 160, "Seleccionar carpeta"))
-    parts.append(button(x + 286, y + 42, 160, "Generar forma"))
-    parts.append(button(x + 286, y + 84, 160, "Exportar editada"))
+    parts.append(action_button(x + 286, y, 160, "Seleccionar", "#f2f2f2", "#8f8f8f"))
+    parts.append(action_button(x + 286, y + 42, 160, "Generar forma", "#d8e8fb", "#7da8d6"))
+    parts.append(action_button(x + 286, y + 84, 160, "Exportar", "#d7ead2", "#6f9366"))
     return parts
 
 
@@ -246,7 +254,7 @@ def render_url() -> str:
         group(42, 282, 1036, 160, "2. Extraccion de audio"),
         button(66, 312, 170, "Seleccionar carpeta"),
         text(260, 332, "/Users/JoanToni/Music/Descargas", 12, "400", "#3b3b3b"),
-        button(66, 364, 190, "Extraer audio"),
+        action_button(66, 364, 140, "Extraer MP3"),
         group(42, 468, 1036, 136, "Resultados"),
         rect(64, 500, 992, 32, "url(#tableHeader)", "#8f8f8f", 14),
         text(82, 521, "Archivo", 12, "600", "#333"),
