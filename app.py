@@ -254,12 +254,21 @@ class RoundedSection(tk.Frame):
         radius: int = 30,
         padding: int = 18,
         min_height: int = 120,
+        min_width: int | None = None,
     ) -> None:
         super().__init__(master, bg=METAL_BG, highlightthickness=0, bd=0)
         self.title = title
         self.radius = radius
         self.padding = padding
-        self.canvas = tk.Canvas(self, bg=METAL_BG, height=min_height, highlightthickness=0, bd=0)
+        canvas_options: dict[str, object] = {
+            "bg": METAL_BG,
+            "height": min_height,
+            "highlightthickness": 0,
+            "bd": 0,
+        }
+        if min_width is not None:
+            canvas_options["width"] = min_width
+        self.canvas = tk.Canvas(self, **canvas_options)
         self.canvas.pack(fill=tk.BOTH, expand=True)
         self.content = tk.Frame(self.canvas, bg=PANEL_FILL, highlightthickness=0, bd=0)
         self.window_id = self.canvas.create_window(0, 0, window=self.content, anchor=tk.NW)
@@ -382,16 +391,36 @@ class ITunesHeader(tk.Canvas):
         logo_x = start_x - 72
 
         self.create_oval(
-            logo_x - 24,
-            button_y - 24,
-            logo_x + 24,
-            button_y + 24,
-            fill="#dde3c7",
+            logo_x - 25,
+            button_y - 25,
+            logo_x + 25,
+            button_y + 25,
+            fill="#f3f5de",
             outline="#767c68",
             width=2,
         )
-        self.create_text(logo_x, button_y - 3, text="MT", font=("Helvetica", 14, "bold"), fill="#1d2218")
-        self.create_text(logo_x, button_y + 13, text="audio", font=("Helvetica", 7, "bold"), fill="#47503c")
+        self.create_oval(
+            logo_x - 17,
+            button_y - 17,
+            logo_x + 17,
+            button_y + 17,
+            fill="#d4ddbd",
+            outline="#9ba486",
+            width=1,
+        )
+        self.create_arc(
+            logo_x - 20,
+            button_y - 20,
+            logo_x + 20,
+            button_y + 20,
+            start=40,
+            extent=110,
+            outline="#ffffff",
+            width=2,
+            style=tk.ARC,
+        )
+        self.create_text(logo_x, button_y - 4, text="♪", font=("Helvetica", 17, "bold"), fill="#25301f")
+        self.create_text(logo_x, button_y + 13, text="MT", font=("Helvetica", 8, "bold"), fill="#47503c")
 
         start_pressed = self.pressed_tag == "start_button"
         self.create_oval(
@@ -470,18 +499,17 @@ class ITunesHeader(tk.Canvas):
             width=2,
             tags="display",
         )
-        self.create_text(display_x + display_w // 2, 48, text="Music Tool", font=("Helvetica", 13, "bold"), fill="#1b1b1b")
         self.create_text(
             display_x + display_w // 2,
-            64,
+            55,
             text=self.status_var.get(),
-            font=("Helvetica", 12),
+            font=("Helvetica", 13, "bold"),
             fill="#1b1b1b",
         )
         progress_x1 = display_x + 72
         progress_x2 = display_x + display_w - 72
-        progress_y1 = 70
-        progress_y2 = 75
+        progress_y1 = 66
+        progress_y2 = 72
         try:
             progress = max(0.0, min(1.0, float(self.progress_var.get())))
         except (tk.TclError, ValueError):
@@ -491,26 +519,27 @@ class ITunesHeader(tk.Canvas):
         if progress > 0:
             self.create_rectangle(progress_x1, progress_y1, progress_end, progress_y2, fill="#303030", outline="")
 
-        search_x = width - 248
+        search_w = 150
+        search_x = width - search_w - 56
         diagnostic_pressed = self.pressed_tag == "diagnostics_button"
         draw_rounded_rect(
             self,
             search_x,
-            34,
-            search_x + 192,
-            72,
-            19,
+            36,
+            search_x + search_w,
+            70,
+            17,
             fill="#cfe7c8" if not diagnostic_pressed else "#b9dcae",
             outline="#6f9366",
             width=2,
             tags="diagnostics_button",
         )
-        self.create_text(search_x + 46, 57, text="✓", font=("Helvetica", 16, "bold"), fill="#2f6e2c", tags="diagnostics_button")
+        self.create_text(search_x + 34, 56, text="✓", font=("Helvetica", 14, "bold"), fill="#2f6e2c", tags="diagnostics_button")
         self.create_text(
-            search_x + 108,
-            58,
+            search_x + 90,
+            57,
             text="Diagnóstico",
-            font=("Helvetica", 12, "bold"),
+            font=("Helvetica", 11, "bold"),
             fill="#173317",
             tags="diagnostics_button",
         )
@@ -612,12 +641,10 @@ class MusicToolApp(Tk):
         self.conversion_tab.rowconfigure(1, weight=1)
 
         controls = tk.Frame(self.conversion_tab, bg=METAL_BG)
-        controls.grid(row=0, column=0, sticky="ew", padx=4, pady=(4, 8))
-        controls.columnconfigure(0, weight=1)
-        controls.columnconfigure(1, weight=1)
+        controls.grid(row=0, column=0, sticky="w", padx=4, pady=(4, 8))
 
-        songs_panel = RoundedSection(controls, "1. Canciones", min_height=210)
-        songs_panel.grid(row=0, column=0, sticky="nsew", padx=(0, 8))
+        songs_panel = RoundedSection(controls, "1. Canciones", min_height=150, min_width=310)
+        songs_panel.grid(row=0, column=0, sticky="nw", padx=(0, 8))
         songs = songs_panel.content
         songs.columnconfigure(0, weight=1)
         ttk.Button(songs, text="Añadir canciones", command=self.add_files).grid(row=0, column=0, sticky="ew", padx=4, pady=4)
@@ -626,8 +653,8 @@ class MusicToolApp(Tk):
         )
         ttk.Button(songs, text="Vaciar lista", command=self.clear_files).grid(row=2, column=0, sticky="ew", padx=4, pady=4)
 
-        output_panel = RoundedSection(controls, "2. Salida", min_height=210)
-        output_panel.grid(row=0, column=1, sticky="nsew", padx=(8, 0))
+        output_panel = RoundedSection(controls, "2. Salida", min_height=150, min_width=360)
+        output_panel.grid(row=0, column=1, sticky="nw", padx=(8, 0))
         output = output_panel.content
         output.columnconfigure(1, weight=1)
         ttk.Button(output, text="Seleccionar carpeta", command=self.choose_output_dir).grid(
@@ -1567,14 +1594,18 @@ class MusicToolApp(Tk):
         self.after(0, lambda: self.set_progress(0.35))
 
         try:
-            process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-            self.current_process = process
-            stdout, stderr = process.communicate()
+            returncode, stdout, stderr = self._run_url_command(command)
+            if returncode != 0 and self._is_ssl_certificate_error(stdout, stderr):
+                self.log_message(
+                    "Certificados SSL del sistema antiguos o incompletos. Reintentando en modo compatibilidad SSL."
+                )
+                self.after(0, lambda: self.set_status("Reintentando YouTube por SSL..."))
+                self.after(0, lambda: self.set_progress(0.45))
+                retry_command = self._build_url_extraction_command(url, output_dir, skip_certificate_check=True)
+                returncode, stdout, stderr = self._run_url_command(retry_command)
         except OSError as exc:
             self.after(0, lambda: self._handle_url_error(f"No se pudo ejecutar yt-dlp: {exc}"))
             return
-        finally:
-            self.current_process = None
 
         if self.cancel_requested.is_set():
             self.log_message("Extracción URL cancelada por el usuario.")
@@ -1582,7 +1613,7 @@ class MusicToolApp(Tk):
             self.after(0, self._finish_url_extraction)
             return
 
-        if process.returncode != 0:
+        if returncode != 0:
             error = stderr.strip() or stdout.strip() or "yt-dlp falló sin mensaje de error."
             self.after(0, lambda: self._handle_url_error(error))
             return
@@ -1608,7 +1639,22 @@ class MusicToolApp(Tk):
         self.after(0, lambda status=finished_status: self.set_status(status))
         self.after(0, self._finish_url_extraction)
 
-    def _build_url_extraction_command(self, url: str, output_dir: Path) -> list[str]:
+    def _run_url_command(self, command: list[str]) -> tuple[int, str, str]:
+        process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        self.current_process = process
+        try:
+            stdout, stderr = process.communicate()
+        finally:
+            self.current_process = None
+        return process.returncode, stdout, stderr
+
+    def _build_url_extraction_command(
+        self,
+        url: str,
+        output_dir: Path,
+        *,
+        skip_certificate_check: bool = False,
+    ) -> list[str]:
         yt_dlp = find_binary("yt-dlp")
         ffmpeg = find_binary("ffmpeg")
         assert yt_dlp is not None
@@ -1623,14 +1669,35 @@ class MusicToolApp(Tk):
             "--restrict-filenames",
             "--embed-metadata",
             "--add-metadata",
-            "--ignore-errors",
             "--ffmpeg-location",
             str(Path(ffmpeg).parent),
             "-o",
             output_template,
             url,
         ]
+        if skip_certificate_check:
+            command.insert(1, "--no-check-certificates")
         return command
+
+    def _is_ssl_certificate_error(self, stdout: str, stderr: str) -> bool:
+        return "CERTIFICATE_VERIFY_FAILED" in f"{stdout}\n{stderr}"
+
+    def _friendly_url_error(self, message: str) -> str:
+        if "CERTIFICATE_VERIFY_FAILED" in message:
+            return (
+                "YouTube no se ha podido abrir porque macOS/Python no encuentra certificados SSL válidos.\n\n"
+                "La app ya ha probado el modo de compatibilidad SSL. Si sigue fallando, revisa en el iMac:\n"
+                "1. Que la fecha y hora del sistema sean correctas.\n"
+                "2. Que el binario bin/yt-dlp esté actualizado.\n"
+                "3. Que la conexión a internet no esté bloqueando YouTube.\n\n"
+                "El detalle técnico completo queda guardado en el registro."
+            )
+        if "HTTP Error 403" in message or "Sign in" in message:
+            return (
+                "YouTube ha rechazado esta descarga. Puede ser un vídeo restringido, privado, con edad limitada o bloqueado.\n\n"
+                "Prueba otro vídeo o actualiza bin/yt-dlp. El detalle técnico completo queda en el registro."
+            )
+        return f"No se pudo extraer el audio.\n\nDetalle:\n{message[:700]}"
 
     def _audio_files_in_folder(self, folder: Path) -> set[Path]:
         return {
@@ -1664,7 +1731,7 @@ class MusicToolApp(Tk):
         self.set_progress(0.0)
         self.set_status("Error extrayendo URL")
         self._finish_url_extraction()
-        messagebox.showerror(APP_NAME, message)
+        messagebox.showerror(APP_NAME, self._friendly_url_error(message))
 
     def _finish_url_extraction(self) -> None:
         self.is_extracting_url = False
