@@ -143,8 +143,8 @@
 <line x1="0" y1="813" x2="1120" y2="813" stroke="#eeeeee" opacity="0.28"/>
 <line x1="0" y1="819" x2="1120" y2="819" stroke="#eeeeee" opacity="0.28"/>
 <text x="532" y="28" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#111111">Music Tool</text>
-<rect x="182" y="30" width="60" height="48" rx="20" fill="#f7f7f7" stroke="#7d7d7d" stroke-width="2"/>
-<rect x="188" y="36" width="48" height="36" rx="16" fill="#d9dec0" stroke="#6e7562"/>
+<circle cx="212" cy="54" r="25" fill="#f7f7f7" stroke="#7d7d7d" stroke-width="2"/>
+<circle cx="212" cy="54" r="18" fill="#d9dec0" stroke="#6e7562"/>
 <path d="M198 41 A20 20 0 0 1 226 43" fill="none" stroke="#ffffff" stroke-width="2"/>
 <text x="202" y="54" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#25301f">MT</text>
 <text x="198" y="68" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="7" font-weight="700" fill="#47503c">audio</text>
@@ -156,7 +156,7 @@
 <text x="506" y="58" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="13" font-weight="700" fill="#1b1b1b">Listo</text>
 <rect x="420" y="72" width="280" height="7" rx="1" fill="#edf0d5" stroke="#4f5447"/>
 <rect x="420" y="72" width="112" height="7" rx="1" fill="#2f2f2f" stroke="#2f2f2f"/>
-<rect x="906" y="34" width="132" height="40" rx="20" fill="#cfe7c8" stroke="#6f9366"/>
+<rect x="926" y="39" width="112" height="30" rx="15" fill="#cfe7c8" stroke="#6f9366"/>
 <text x="934" y="59" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="11" font-weight="700" fill="#173317">Diagnostico</text>
 <rect x="42" y="112" width="1036" height="38" rx="14" fill="#d4d4d4" stroke="#8d8d8d"/>
 <rect x="52" y="118" width="128" height="26" rx="12" fill="#f8f8f8" stroke="#8d8d8d"/>
@@ -166,26 +166,29 @@
 <rect x="174" y="168" width="340" height="185" rx="30" fill="#f4f4f4" stroke="#8f8f8f"/>
 <line x1="192" y1="171" x2="496" y2="171" stroke="#ffffff"/>
 <text x="194" y="173" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#2e3338">1. Canciones</text>
-<rect x="194" y="198" width="280" height="40" rx="20" fill="#3667e8" stroke="#1d47af"/>
-<text x="286" y="223" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#ffffff">Anadir canciones</text>
-<rect x="194" y="244" width="280" height="40" rx="20" fill="#f2f2f2" stroke="#8f8f8f"/>
-<text x="277" y="269" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#303030">Quitar seleccionado</text>
-<rect x="194" y="290" width="280" height="40" rx="20" fill="#f2f2f2" stroke="#8f8f8f"/>
-<text x="298" y="315" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#303030">Vaciar lista</text>
+<rect x="194" y="198" width="220" height="30" rx="15" fill="#3667e8" stroke="#1d47af"/>
+<text x="256" y="218" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="11" font-weight="700" fill="#ffffff">Anadir canciones</text>
+<rect x="194" y="234" width="220" height="30" rx="15" fill="#f2f2f2" stroke="#8f8f8f"/>
+<text x="247" y="254" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="11" font-weight="700" fill="#303030">Quitar seleccionado</text>
+<rect x="194" y="270" width="220" height="30" rx="15" fill="#f2f2f2" stroke="#8f8f8f"/>
+<text x="268" y="290" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="11" font-weight="700" fill="#303030">Vaciar lista</text>
 <rect x="534" y="168" width="390" height="185" rx="30" fill="#f4f4f4" stroke="#8f8f8f"/>
 <line x1="552" y1="171" x2="906" y2="171" stroke="#ffffff"/>
 <text x="554" y="173" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#2e3338">2. Salida</text>
-<rect x="554" y="198" width="270" height="40" rx="20" fill="#3667e8" stroke="#1d47af"/>
-<text x="632" y="223" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#ffffff">Seleccionar carpeta</text>
-<text x="554" y="256" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="500" fill="#1f2933">Formato</text>
-<rect x="636" y="236" width="170" height="28" rx="11" fill="#ffffff" stroke="#a1a1a1"/>
-<text x="646" y="255" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#69727d">MP3</text>
-<text x="554" y="292" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="500" fill="#1f2933">Calidad</text>
-<rect x="636" y="272" width="170" height="28" rx="11" fill="#ffffff" stroke="#a1a1a1"/>
-<text x="646" y="291" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#69727d">320k</text>
-<text x="554" y="328" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#1f2933">Sobrescribir existentes</text>
+<rect x="554" y="198" width="200" height="30" rx="15" fill="#3667e8" stroke="#1d47af"/>
+<text x="597" y="218" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="11" font-weight="700" fill="#ffffff">Seleccionar carpeta</text>
+<text x="554" y="246" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="500" fill="#1f2933">Formato</text>
+<rect x="636" y="226" width="170" height="28" rx="11" fill="#ffffff" stroke="#a1a1a1"/>
+<text x="646" y="245" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#69727d">MP3</text>
+<text x="554" y="282" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="500" fill="#1f2933">Calidad</text>
+<rect x="636" y="262" width="170" height="28" rx="11" fill="#ffffff" stroke="#a1a1a1"/>
+<text x="646" y="281" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#69727d">320k</text>
+<text x="554" y="318" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#1f2933">Sobrescribir existentes</text>
 <rect x="42" y="380" width="1036" height="196" rx="18" fill="#ffffff" stroke="#8f8f8f"/>
 <rect x="42" y="380" width="1036" height="32" rx="18" fill="url(#tableHeader)" stroke="#8f8f8f"/>
+<rect x="43" y="438" width="1034" height="26" rx="0" fill="#edf4ff" stroke="#edf4ff"/>
+<rect x="43" y="490" width="1034" height="26" rx="0" fill="#edf4ff" stroke="#edf4ff"/>
+<rect x="43" y="542" width="1034" height="26" rx="0" fill="#edf4ff" stroke="#edf4ff"/>
 <text x="52" y="401" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#333">Cancion</text>
 <line x1="402" y1="380" x2="402" y2="576" stroke="#e2e2e2"/>
 <text x="412" y="401" font-family="-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#333">Formato</text>

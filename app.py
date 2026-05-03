@@ -327,10 +327,12 @@ class PillButton(tk.Canvas):
         outline: str = "#7da8d6",
         foreground: str = "#173317",
     ) -> None:
+        self.button_height = 30
+        self.button_radius = 15
         super().__init__(
             master,
             width=width,
-            height=40,
+            height=self.button_height,
             bg=PANEL_FILL,
             highlightthickness=0,
             bd=0,
@@ -357,8 +359,8 @@ class PillButton(tk.Canvas):
             1,
             1,
             width - 1,
-            39,
-            20,
+            self.button_height - 1,
+            self.button_radius,
             fill=fill,
             outline=self.outline,
             width=1,
@@ -366,9 +368,9 @@ class PillButton(tk.Canvas):
         )
         self.create_text(
             width // 2,
-            20,
+            self.button_height // 2,
             text=self.text,
-            font=("Helvetica", 11, "bold"),
+            font=("Helvetica", 10, "bold"),
             fill=self.foreground,
             tags="pill",
         )
@@ -381,7 +383,7 @@ class PillButton(tk.Canvas):
         was_pressed = self.is_pressed
         self.is_pressed = False
         self._redraw()
-        if was_pressed and 0 <= int(event.x) <= int(self.winfo_width()) and 0 <= int(event.y) <= 40:
+        if was_pressed and 0 <= int(event.x) <= int(self.winfo_width()) and 0 <= int(event.y) <= self.button_height:
             self.command()
 
     def _leave(self, _event: tk.Event) -> None:
@@ -478,25 +480,21 @@ class ITunesHeader(tk.Canvas):
             "stop_button": (stop_x - 28, button_y - 28, stop_x + 28, button_y + 28),
         }
 
-        draw_rounded_rect(
-            self,
-            logo_x - 30,
-            button_y - 24,
-            logo_x + 30,
-            button_y + 24,
-            20,
+        self.create_oval(
+            logo_x - 25,
+            button_y - 25,
+            logo_x + 25,
+            button_y + 25,
             fill="#f7f7f7",
             outline="#7d7d7d",
             width=2,
             tags="logo",
         )
-        draw_rounded_rect(
-            self,
-            logo_x - 24,
+        self.create_oval(
+            logo_x - 18,
             button_y - 18,
-            logo_x + 24,
+            logo_x + 18,
             button_y + 18,
-            16,
             fill="#d9dec0",
             outline="#6e7562",
             width=1,
@@ -613,17 +611,17 @@ class ITunesHeader(tk.Canvas):
         if progress > 0:
             self.create_rectangle(progress_x1, progress_y1, progress_end, progress_y2, fill="#303030", outline="")
 
-        search_w = 132
+        search_w = 112
         search_x = width - search_w - 56
-        self.button_bounds["diagnostics_button"] = (search_x, 34, search_x + search_w, 74)
+        self.button_bounds["diagnostics_button"] = (search_x, 39, search_x + search_w, 69)
         diagnostic_pressed = self.pressed_tag == "diagnostics_button"
         draw_rounded_rect(
             self,
             search_x,
-            34,
+            39,
             search_x + search_w,
-            74,
-            20,
+            69,
+            15,
             fill="#cfe7c8" if not diagnostic_pressed else "#b9dcae",
             outline="#6f9366",
             width=2,
@@ -633,7 +631,7 @@ class ITunesHeader(tk.Canvas):
             search_x + search_w // 2,
             55,
             text="Diagnóstico",
-            font=("Helvetica", 11, "bold"),
+            font=("Helvetica", 10, "bold"),
             fill="#173317",
             tags="diagnostics_button",
         )
@@ -725,6 +723,15 @@ class MusicToolApp(Tk):
             foreground=fg,
         )
 
+    def _configure_table_stripes(self, table: ttk.Treeview) -> None:
+        table.tag_configure("stripe_even", background="#ffffff")
+        table.tag_configure("stripe_odd", background="#edf4ff")
+
+    def _apply_table_stripes(self, table: ttk.Treeview) -> None:
+        for index, item in enumerate(table.get_children()):
+            tag = "stripe_odd" if index % 2 else "stripe_even"
+            table.item(item, tags=(tag,))
+
     def _build_ui(self) -> None:
         self.configure(bg=METAL_BG)
         root = tk.Frame(self, bg=METAL_BG, padx=12, pady=10)
@@ -769,13 +776,13 @@ class MusicToolApp(Tk):
         songs_panel.grid(row=0, column=1, sticky="n", padx=(0, 8))
         songs = songs_panel.content
         songs.columnconfigure(0, weight=1)
-        self._action_button(songs, "Añadir canciones", self.add_files, width=280, tone="blue").grid(
+        self._action_button(songs, "Añadir canciones", self.add_files, width=220, tone="blue").grid(
             row=0, column=0, sticky="w", padx=4, pady=4
         )
-        self._action_button(songs, "Quitar seleccionado", self.remove_selected, width=280, tone="silver").grid(
+        self._action_button(songs, "Quitar seleccionado", self.remove_selected, width=220, tone="silver").grid(
             row=1, column=0, sticky="w", padx=4, pady=4
         )
-        self._action_button(songs, "Vaciar lista", self.clear_files, width=280, tone="silver").grid(
+        self._action_button(songs, "Vaciar lista", self.clear_files, width=220, tone="silver").grid(
             row=2, column=0, sticky="w", padx=4, pady=4
         )
 
@@ -783,7 +790,7 @@ class MusicToolApp(Tk):
         output_panel.grid(row=0, column=2, sticky="n", padx=(8, 0))
         output = output_panel.content
         output.columnconfigure(1, weight=1)
-        self._action_button(output, "Seleccionar carpeta", self.choose_output_dir, width=270, tone="blue").grid(
+        self._action_button(output, "Seleccionar carpeta", self.choose_output_dir, width=200, tone="blue").grid(
             row=0, column=0, columnspan=2, sticky="w", padx=4, pady=4
         )
         ttk.Label(output, text="Formato").grid(row=1, column=0, sticky="w", padx=4, pady=4)
@@ -833,6 +840,7 @@ class MusicToolApp(Tk):
         for column in columns:
             self.table.heading(column, text=headings[column])
             self.table.column(column, width=widths[column], anchor=tk.W)
+        self._configure_table_stripes(self.table)
 
         scrollbar = ttk.Scrollbar(table_frame, orient=tk.VERTICAL, command=self.table.yview)
         self.table.configure(yscrollcommand=scrollbar.set)
@@ -981,7 +989,7 @@ class MusicToolApp(Tk):
         load_panel.grid(row=0, column=0, columnspan=2, sticky="ew", padx=4, pady=(4, 8))
         load = load_panel.content
         load.columnconfigure(1, weight=1)
-        self._action_button(load, "Cargar canción", self.load_editor_song, width=160, tone="blue").grid(
+        self._action_button(load, "Cargar canción", self.load_editor_song, width=140, tone="blue").grid(
             row=0, column=0, padx=4, pady=4
         )
         ttk.Label(load, textvariable=self.editor_file, anchor=tk.W).grid(row=0, column=1, sticky="ew", padx=8, pady=4)
@@ -1027,13 +1035,13 @@ class MusicToolApp(Tk):
         ttk.Combobox(edits, textvariable=self.editor_quality, values=MP3_QUALITIES, width=10, state="readonly").grid(
             row=6, column=1, sticky="ew", padx=4, pady=4
         )
-        self._action_button(edits, "Seleccionar carpeta", self.choose_editor_output_dir, width=180, tone="silver").grid(
+        self._action_button(edits, "Seleccionar carpeta", self.choose_editor_output_dir, width=160, tone="silver").grid(
             row=0, column=2, sticky="e", padx=(14, 4), pady=4
         )
-        self._action_button(edits, "Generar forma", self.start_waveform_generation, width=180, tone="blue").grid(
+        self._action_button(edits, "Generar forma", self.start_waveform_generation, width=150, tone="blue").grid(
             row=1, column=2, sticky="e", padx=(14, 4), pady=4
         )
-        self._action_button(edits, "Exportar editada", self.start_editor_export, width=180, tone="green").grid(
+        self._action_button(edits, "Exportar editada", self.start_editor_export, width=150, tone="green").grid(
             row=2, column=2, sticky="e", padx=(14, 4), pady=4
         )
         ttk.Checkbutton(edits, text="Sobrescribir", variable=self.editor_overwrite).grid(
@@ -1075,12 +1083,12 @@ class MusicToolApp(Tk):
         options_panel.grid(row=1, column=0, sticky="new", padx=4, pady=4)
         options = options_panel.content
         options.columnconfigure(1, weight=1)
-        self._action_button(options, "Seleccionar carpeta", self.choose_url_output_dir, width=190, tone="blue").grid(
+        self._action_button(options, "Seleccionar carpeta", self.choose_url_output_dir, width=160, tone="blue").grid(
             row=0, column=0, sticky="w", padx=4, pady=4
         )
         self.url_output_label = ttk.Label(options, text="Sin carpeta seleccionada", anchor=tk.W)
         self.url_output_label.grid(row=0, column=1, sticky="ew", padx=8, pady=4)
-        self._action_button(options, "Extraer MP3", self.start_url_extraction, width=150, tone="green").grid(
+        self._action_button(options, "Extraer MP3", self.start_url_extraction, width=120, tone="green").grid(
             row=1, column=0, sticky="w", padx=4, pady=(12, 4)
         )
 
@@ -1099,6 +1107,7 @@ class MusicToolApp(Tk):
         ):
             self.url_results_table.heading(column, text=heading)
             self.url_results_table.column(column, width=width, anchor=tk.W)
+        self._configure_table_stripes(self.url_results_table)
         url_scrollbar = ttk.Scrollbar(results, orient=tk.VERTICAL, command=self.url_results_table.yview)
         self.url_results_table.configure(yscrollcommand=url_scrollbar.set)
         self.url_results_table.grid(row=0, column=0, sticky="nsew")
@@ -1144,6 +1153,7 @@ class MusicToolApp(Tk):
                 ),
             )
         if paths:
+            self._apply_table_stripes(self.table)
             self.set_status(f"{len(self.files)} canción(es) cargada(s)")
 
     def remove_selected(self) -> None:
@@ -1151,12 +1161,14 @@ class MusicToolApp(Tk):
             if item in self.files:
                 self.files.remove(item)
             self.table.delete(item)
+        self._apply_table_stripes(self.table)
         self.set_status("Selección eliminada")
 
     def clear_files(self) -> None:
         self.files.clear()
         for item in self.table.get_children():
             self.table.delete(item)
+        self._apply_table_stripes(self.table)
         self.set_status("Lista vacía")
 
     def choose_output_dir(self) -> None:
@@ -1847,17 +1859,20 @@ class MusicToolApp(Tk):
             tk.END,
             values=(path.name, path.suffix.replace(".", "").upper(), format_size(path), status),
         )
+        self._apply_table_stripes(self.url_results_table)
 
     def _add_url_status(self, message: str, status: str) -> None:
         if not self.url_results_table:
             return
         self.url_results_table.insert("", tk.END, values=(message, "-", "-", status))
+        self._apply_table_stripes(self.url_results_table)
 
     def _clear_url_results(self) -> None:
         if not self.url_results_table:
             return
         for item in self.url_results_table.get_children():
             self.url_results_table.delete(item)
+        self._apply_table_stripes(self.url_results_table)
 
     def _handle_url_error(self, message: str) -> None:
         self.log_message(f"Error extrayendo URL: {message}")
