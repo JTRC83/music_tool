@@ -201,7 +201,7 @@ def render_editor() -> str:
         action_button(62, 196, 140, "Cargar cancion", "#3667e8", "#1d47af", "#ffffff"),
         text(220, 216, "song_01.flac", 13, "500"),
         text(62, 238, "Duracion: 4:01 | Peso: 35.4 MB | Bitrate: 911 kbps", 12, "400", "#3b3b3b"),
-        group(42, 276, 500, 260, "2. Metadatos"),
+        group(42, 276, 500, 292, "2. Metadatos"),
         *metadata_fields(64, 306),
         group(578, 276, 500, 292, "3. Edicion y exportacion"),
         *edit_fields(600, 306),

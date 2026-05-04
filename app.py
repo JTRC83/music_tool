@@ -246,6 +246,33 @@ def draw_rounded_rect(
     canvas.create_polygon(points, smooth=True, fill=fill, outline=outline, width=width, tags=tags)
 
 
+def draw_capsule(
+    canvas: tk.Canvas,
+    x1: int,
+    y1: int,
+    x2: int,
+    y2: int,
+    *,
+    fill: str,
+    outline: str,
+    width: int = 1,
+    tags: str = "pill",
+) -> None:
+    height = max(2, y2 - y1)
+    radius = height // 2
+    left_x2 = x1 + height
+    right_x1 = x2 - height
+
+    canvas.create_rectangle(x1 + radius, y1, x2 - radius, y2, fill=fill, outline="", tags=tags)
+    canvas.create_oval(x1, y1, left_x2, y2, fill=fill, outline="", tags=tags)
+    canvas.create_oval(right_x1, y1, x2, y2, fill=fill, outline="", tags=tags)
+
+    canvas.create_arc(x1, y1, left_x2, y2, start=90, extent=180, style=tk.ARC, outline=outline, width=width, tags=tags)
+    canvas.create_arc(right_x1, y1, x2, y2, start=-90, extent=180, style=tk.ARC, outline=outline, width=width, tags=tags)
+    canvas.create_line(x1 + radius, y1, x2 - radius, y1, fill=outline, width=width, tags=tags)
+    canvas.create_line(x1 + radius, y2, x2 - radius, y2, fill=outline, width=width, tags=tags)
+
+
 class RoundedSection(tk.Frame):
     def __init__(
         self,
@@ -329,11 +356,15 @@ class PillButton(tk.Canvas):
     ) -> None:
         self.button_height = 30
         self.button_radius = 60
+        try:
+            background = str(master.cget("bg"))
+        except tk.TclError:
+            background = PANEL_FILL
         super().__init__(
             master,
             width=width,
             height=self.button_height,
-            bg=PANEL_FILL,
+            bg=background,
             highlightthickness=0,
             bd=0,
             cursor="pointinghand",
@@ -354,13 +385,12 @@ class PillButton(tk.Canvas):
         width = max(int(self.winfo_width()), 40)
         fill = self.active_fill if self.is_pressed else self.fill
         self.delete("all")
-        draw_rounded_rect(
+        draw_capsule(
             self,
             1,
             1,
             width - 1,
             self.button_height - 1,
-            self.button_radius,
             fill=fill,
             outline=self.outline,
             width=1,
@@ -431,7 +461,7 @@ class ITunesHeader(tk.Canvas):
             return None
         try:
             source = tk.PhotoImage(file=str(logo_path))
-            factor = max(1, (max(source.width(), source.height()) + 73) // 74)
+            factor = max(1, (max(source.width(), source.height()) + 89) // 90)
             return source.subsample(factor, factor)
         except tk.TclError:
             return None
@@ -493,16 +523,6 @@ class ITunesHeader(tk.Canvas):
         }
 
         if self.logo_photo:
-            self.create_oval(
-                logo_x - 38,
-                button_y - 38,
-                logo_x + 38,
-                button_y + 38,
-                fill="#f2f2f2",
-                outline="#7d7d7d",
-                width=2,
-                tags="logo",
-            )
             self.create_image(logo_x, button_y, image=self.logo_photo, tags="logo")
         else:
             self.create_oval(
@@ -629,13 +649,12 @@ class ITunesHeader(tk.Canvas):
         search_x = width - search_w - 56
         self.button_bounds["diagnostics_button"] = (search_x, 39, search_x + search_w, 69)
         diagnostic_pressed = self.pressed_tag == "diagnostics_button"
-        draw_rounded_rect(
+        draw_capsule(
             self,
             search_x,
             39,
             search_x + search_w,
             69,
-            60,
             fill="#cfe7c8" if not diagnostic_pressed else "#b9dcae",
             outline="#6f9366",
             width=2,
@@ -991,7 +1010,16 @@ class MusicToolApp(Tk):
 
         buttons = tk.Frame(window, bg=METAL_BG, padx=14, pady=12)
         buttons.pack(fill=tk.X)
-        ttk.Button(buttons, text="Cerrar", command=window.destroy).pack(side=tk.RIGHT)
+        PillButton(
+            buttons,
+            text="Cerrar",
+            command=window.destroy,
+            width=110,
+            fill="#f2f2f2",
+            active_fill="#dedede",
+            outline="#8f8f8f",
+            foreground="#303030",
+        ).pack(side=tk.RIGHT)
 
     def _build_editor_tab(self) -> None:
         self.editor_tab.columnconfigure(0, weight=1)
@@ -1009,7 +1037,7 @@ class MusicToolApp(Tk):
         ttk.Label(load, textvariable=self.editor_file, anchor=tk.W).grid(row=0, column=1, sticky="ew", padx=8, pady=4)
         ttk.Label(load, textvariable=self.editor_info, anchor=tk.W).grid(row=1, column=0, columnspan=2, sticky="ew", padx=4, pady=4)
 
-        metadata_panel = RoundedSection(self.editor_tab, "2. Metadatos", min_height=260)
+        metadata_panel = RoundedSection(self.editor_tab, "2. Metadatos", min_height=292)
         metadata_panel.grid(row=1, column=0, sticky="ew", padx=(4, 8), pady=4)
         metadata = metadata_panel.content
         metadata.columnconfigure(1, weight=1)
