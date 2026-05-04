@@ -251,7 +251,7 @@ class RoundedSection(tk.Frame):
         self,
         master: tk.Widget,
         title: str = "",
-        radius: int = 30,
+        radius: int = 36,
         padding: int = 18,
         min_height: int = 120,
         min_width: int | None = None,
@@ -408,6 +408,7 @@ class ITunesHeader(tk.Canvas):
         self.start_command = start_command
         self.stop_command = stop_command
         self.diagnostics_command = diagnostics_command
+        self.logo_photo = self._load_logo()
         self.pressed_tag: str | None = None
         self.button_bounds: dict[str, tuple[int, int, int, int]] = {}
         self.status_var.trace_add("write", self._status_changed)
@@ -423,6 +424,17 @@ class ITunesHeader(tk.Canvas):
         self.tag_bind("start_button", "<Leave>", lambda _event: self._leave_button())
         self.tag_bind("stop_button", "<Leave>", lambda _event: self._leave_button())
         self.tag_bind("diagnostics_button", "<Leave>", lambda _event: self._leave_button())
+
+    def _load_logo(self) -> tk.PhotoImage | None:
+        logo_path = base_path() / "assets" / "logomusictool.png"
+        if not logo_path.exists():
+            return None
+        try:
+            source = tk.PhotoImage(file=str(logo_path))
+            factor = max(1, (max(source.width(), source.height()) + 55) // 56)
+            return source.subsample(factor, factor)
+        except tk.TclError:
+            return None
 
     def _press(self, tag: str) -> None:
         self.pressed_tag = tag
@@ -480,39 +492,41 @@ class ITunesHeader(tk.Canvas):
             "stop_button": (stop_x - 28, button_y - 28, stop_x + 28, button_y + 28),
         }
 
-        self.create_oval(
-            logo_x - 25,
-            button_y - 25,
-            logo_x + 25,
-            button_y + 25,
-            fill="#f7f7f7",
-            outline="#7d7d7d",
-            width=2,
-            tags="logo",
-        )
-        self.create_oval(
-            logo_x - 18,
-            button_y - 18,
-            logo_x + 18,
-            button_y + 18,
-            fill="#d9dec0",
-            outline="#6e7562",
-            width=1,
-            tags="logo",
-        )
-        self.create_arc(
-            logo_x - 21,
-            button_y - 21,
-            logo_x + 21,
-            button_y + 21,
-            start=40,
-            extent=110,
-            outline="#ffffff",
-            width=2,
-            style=tk.ARC,
-        )
-        self.create_text(logo_x, button_y - 4, text="MT", font=("Helvetica", 14, "bold"), fill="#25301f")
-        self.create_text(logo_x, button_y + 11, text="audio", font=("Helvetica", 7, "bold"), fill="#47503c")
+        if self.logo_photo:
+            self.create_oval(
+                logo_x - 27,
+                button_y - 27,
+                logo_x + 27,
+                button_y + 27,
+                fill="#f2f2f2",
+                outline="#7d7d7d",
+                width=2,
+                tags="logo",
+            )
+            self.create_image(logo_x, button_y, image=self.logo_photo, tags="logo")
+        else:
+            self.create_oval(
+                logo_x - 25,
+                button_y - 25,
+                logo_x + 25,
+                button_y + 25,
+                fill="#f7f7f7",
+                outline="#7d7d7d",
+                width=2,
+                tags="logo",
+            )
+            self.create_oval(
+                logo_x - 18,
+                button_y - 18,
+                logo_x + 18,
+                button_y + 18,
+                fill="#d9dec0",
+                outline="#6e7562",
+                width=1,
+                tags="logo",
+            )
+            self.create_text(logo_x, button_y - 4, text="MT", font=("Helvetica", 14, "bold"), fill="#25301f")
+            self.create_text(logo_x, button_y + 11, text="audio", font=("Helvetica", 7, "bold"), fill="#47503c")
 
         start_pressed = self.pressed_tag == "start_button"
         self.create_oval(
@@ -776,22 +790,22 @@ class MusicToolApp(Tk):
         songs_panel.grid(row=0, column=1, sticky="n", padx=(0, 8))
         songs = songs_panel.content
         songs.columnconfigure(0, weight=1)
-        self._action_button(songs, "Añadir canciones", self.add_files, width=220, tone="blue").grid(
-            row=0, column=0, sticky="w", padx=4, pady=4
+        self._action_button(songs, "Añadir canciones", self.add_files, width=190, tone="blue").grid(
+            row=0, column=0, padx=4, pady=4
         )
-        self._action_button(songs, "Quitar seleccionado", self.remove_selected, width=220, tone="silver").grid(
-            row=1, column=0, sticky="w", padx=4, pady=4
+        self._action_button(songs, "Quitar seleccionado", self.remove_selected, width=190, tone="silver").grid(
+            row=1, column=0, padx=4, pady=4
         )
-        self._action_button(songs, "Vaciar lista", self.clear_files, width=220, tone="silver").grid(
-            row=2, column=0, sticky="w", padx=4, pady=4
+        self._action_button(songs, "Vaciar lista", self.clear_files, width=190, tone="silver").grid(
+            row=2, column=0, padx=4, pady=4
         )
 
         output_panel = RoundedSection(controls, "2. Salida", min_height=185, min_width=390)
         output_panel.grid(row=0, column=2, sticky="n", padx=(8, 0))
         output = output_panel.content
         output.columnconfigure(1, weight=1)
-        self._action_button(output, "Seleccionar carpeta", self.choose_output_dir, width=200, tone="blue").grid(
-            row=0, column=0, columnspan=2, sticky="w", padx=4, pady=4
+        self._action_button(output, "Seleccionar carpeta", self.choose_output_dir, width=190, tone="blue").grid(
+            row=0, column=0, columnspan=2, padx=4, pady=4
         )
         ttk.Label(output, text="Formato").grid(row=1, column=0, sticky="w", padx=4, pady=4)
         ttk.Combobox(output, textvariable=self.output_format, values=CONVERSION_FORMATS, width=10, state="readonly").grid(
@@ -860,13 +874,13 @@ class MusicToolApp(Tk):
             self.update_row(item, quality=self.quality.get())
 
     def _build_global_log(self, root: ttk.Frame) -> None:
-        log_panel = RoundedSection(root, "Registro global", min_height=130)
+        log_panel = RoundedSection(root, "Registro global", min_height=170)
         log_panel.grid(row=2, column=0, sticky="nsew", pady=(10, 0))
         log_frame = log_panel.content
         log_frame.columnconfigure(0, weight=1)
         log_frame.rowconfigure(0, weight=1)
 
-        self.log = tk.Text(log_frame, height=6, wrap=tk.WORD, relief=tk.FLAT, bg="#f7f7f7")
+        self.log = tk.Text(log_frame, height=8, wrap=tk.WORD, relief=tk.FLAT, bg="#f7f7f7")
         log_scrollbar = ttk.Scrollbar(log_frame, orient=tk.VERTICAL, command=self.log.yview)
         self.log.configure(yscrollcommand=log_scrollbar.set)
         self.log.grid(row=0, column=0, sticky="nsew")
@@ -982,8 +996,8 @@ class MusicToolApp(Tk):
     def _build_editor_tab(self) -> None:
         self.editor_tab.columnconfigure(0, weight=1)
         self.editor_tab.columnconfigure(1, weight=1)
-        self.editor_tab.rowconfigure(1, weight=1)
-        self.editor_tab.rowconfigure(2, weight=0)
+        self.editor_tab.rowconfigure(1, weight=0)
+        self.editor_tab.rowconfigure(2, weight=1)
 
         load_panel = RoundedSection(self.editor_tab, "1. Canción", min_height=92)
         load_panel.grid(row=0, column=0, columnspan=2, sticky="ew", padx=4, pady=(4, 8))
@@ -995,8 +1009,8 @@ class MusicToolApp(Tk):
         ttk.Label(load, textvariable=self.editor_file, anchor=tk.W).grid(row=0, column=1, sticky="ew", padx=8, pady=4)
         ttk.Label(load, textvariable=self.editor_info, anchor=tk.W).grid(row=1, column=0, columnspan=2, sticky="ew", padx=4, pady=4)
 
-        metadata_panel = RoundedSection(self.editor_tab, "2. Metadatos", min_height=300)
-        metadata_panel.grid(row=1, column=0, sticky="nsew", padx=(4, 8), pady=4)
+        metadata_panel = RoundedSection(self.editor_tab, "2. Metadatos", min_height=250)
+        metadata_panel.grid(row=1, column=0, sticky="ew", padx=(4, 8), pady=4)
         metadata = metadata_panel.content
         metadata.columnconfigure(1, weight=1)
         for row, (key, label) in enumerate(METADATA_FIELDS):
@@ -1006,8 +1020,8 @@ class MusicToolApp(Tk):
             entry.grid(row=row, column=1, sticky="ew", padx=4, pady=4)
             self.editor_metadata_entries[key] = entry
 
-        edits_panel = RoundedSection(self.editor_tab, "3. Edición y exportación", min_height=300)
-        edits_panel.grid(row=1, column=1, sticky="nsew", padx=(8, 4), pady=4)
+        edits_panel = RoundedSection(self.editor_tab, "3. Edición y exportación", min_height=250)
+        edits_panel.grid(row=1, column=1, sticky="ew", padx=(8, 4), pady=4)
         edits = edits_panel.content
         edits.columnconfigure(1, weight=1)
         edits.columnconfigure(2, weight=0)
@@ -1035,13 +1049,13 @@ class MusicToolApp(Tk):
         ttk.Combobox(edits, textvariable=self.editor_quality, values=MP3_QUALITIES, width=10, state="readonly").grid(
             row=6, column=1, sticky="ew", padx=4, pady=4
         )
-        self._action_button(edits, "Seleccionar carpeta", self.choose_editor_output_dir, width=160, tone="silver").grid(
+        self._action_button(edits, "Seleccionar carpeta", self.choose_editor_output_dir, width=145, tone="silver").grid(
             row=0, column=2, sticky="e", padx=(14, 4), pady=4
         )
-        self._action_button(edits, "Generar forma", self.start_waveform_generation, width=150, tone="blue").grid(
+        self._action_button(edits, "Generar forma", self.start_waveform_generation, width=135, tone="blue").grid(
             row=1, column=2, sticky="e", padx=(14, 4), pady=4
         )
-        self._action_button(edits, "Exportar editada", self.start_editor_export, width=150, tone="green").grid(
+        self._action_button(edits, "Exportar editada", self.start_editor_export, width=135, tone="green").grid(
             row=2, column=2, sticky="e", padx=(14, 4), pady=4
         )
         ttk.Checkbutton(edits, text="Sobrescribir", variable=self.editor_overwrite).grid(
@@ -1051,8 +1065,8 @@ class MusicToolApp(Tk):
             row=8, column=0, columnspan=3, sticky="ew", padx=4, pady=(8, 4)
         )
 
-        waveform_panel = RoundedSection(self.editor_tab, "Edición visual", min_height=360)
-        waveform_panel.grid(row=2, column=0, columnspan=2, sticky="ew", padx=4, pady=(8, 4))
+        waveform_panel = RoundedSection(self.editor_tab, "Edición visual", min_height=420)
+        waveform_panel.grid(row=2, column=0, columnspan=2, sticky="nsew", padx=4, pady=(8, 4))
         waveform = waveform_panel.content
         waveform.columnconfigure(0, weight=1)
         waveform.rowconfigure(0, weight=1)
@@ -1060,8 +1074,8 @@ class MusicToolApp(Tk):
         self.waveform_label.grid(
             row=0, column=0, sticky="ew", padx=8, pady=14
         )
-        self.edit_visual_canvas = tk.Canvas(waveform, height=150, bg=PANEL_FILL, highlightthickness=0, bd=0)
-        self.edit_visual_canvas.grid(row=1, column=0, sticky="ew", padx=8, pady=(0, 10))
+        self.edit_visual_canvas = tk.Canvas(waveform, height=230, bg=PANEL_FILL, highlightthickness=0, bd=0)
+        self.edit_visual_canvas.grid(row=1, column=0, sticky="nsew", padx=8, pady=(0, 10))
         self.edit_visual_canvas.bind("<Configure>", self._redraw_editor_visual)
         self.edit_visual_canvas.bind("<Button-1>", self._start_editor_visual_drag)
         self.edit_visual_canvas.bind("<B1-Motion>", self._drag_editor_visual_handle)
@@ -1070,7 +1084,7 @@ class MusicToolApp(Tk):
 
     def _build_url_tab(self) -> None:
         self.url_tab.columnconfigure(0, weight=1)
-        self.url_tab.rowconfigure(2, weight=1)
+        self.url_tab.rowconfigure(2, weight=0)
 
         source_panel = RoundedSection(self.url_tab, "1. URL", min_height=88)
         source_panel.grid(row=0, column=0, sticky="ew", padx=4, pady=(4, 8))
@@ -1079,26 +1093,26 @@ class MusicToolApp(Tk):
         ttk.Label(source, text="URL").grid(row=0, column=0, sticky="w", padx=4, pady=4)
         ttk.Entry(source, textvariable=self.url_value).grid(row=0, column=1, sticky="ew", padx=4, pady=4)
 
-        options_panel = RoundedSection(self.url_tab, "2. Extracción de audio", min_height=170)
+        options_panel = RoundedSection(self.url_tab, "2. Extracción de audio", min_height=125)
         options_panel.grid(row=1, column=0, sticky="new", padx=4, pady=4)
         options = options_panel.content
         options.columnconfigure(1, weight=1)
-        self._action_button(options, "Seleccionar carpeta", self.choose_url_output_dir, width=160, tone="blue").grid(
+        self._action_button(options, "Seleccionar carpeta", self.choose_url_output_dir, width=150, tone="blue").grid(
             row=0, column=0, sticky="w", padx=4, pady=4
         )
         self.url_output_label = ttk.Label(options, text="Sin carpeta seleccionada", anchor=tk.W)
         self.url_output_label.grid(row=0, column=1, sticky="ew", padx=8, pady=4)
-        self._action_button(options, "Extraer MP3", self.start_url_extraction, width=120, tone="green").grid(
+        self._action_button(options, "Extraer MP3", self.start_url_extraction, width=150, tone="green").grid(
             row=1, column=0, sticky="w", padx=4, pady=(12, 4)
         )
 
-        results_panel = RoundedSection(self.url_tab, "Resultados", min_height=210)
-        results_panel.grid(row=2, column=0, sticky="nsew", padx=4, pady=(8, 4))
+        results_panel = RoundedSection(self.url_tab, "Resultados", min_height=170)
+        results_panel.grid(row=2, column=0, sticky="ew", padx=4, pady=(8, 4))
         results = results_panel.content
         results.columnconfigure(0, weight=1)
         results.rowconfigure(0, weight=1)
         columns = ("file", "format", "size", "status")
-        self.url_results_table = ttk.Treeview(results, columns=columns, show="headings", height=6)
+        self.url_results_table = ttk.Treeview(results, columns=columns, show="headings", height=4)
         for column, heading, width in (
             ("file", "Archivo", 560),
             ("format", "Formato", 120),
@@ -1113,7 +1127,7 @@ class MusicToolApp(Tk):
         self.url_results_table.grid(row=0, column=0, sticky="nsew")
         url_scrollbar.grid(row=0, column=1, sticky="ns")
 
-        note_panel = RoundedSection(self.url_tab, "Uso previsto", min_height=84)
+        note_panel = RoundedSection(self.url_tab, "Uso previsto", min_height=70)
         note_panel.grid(row=3, column=0, sticky="ew", padx=4, pady=(8, 4))
         note = note_panel.content
         note.columnconfigure(0, weight=1)
