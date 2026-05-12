@@ -10,6 +10,7 @@ import shutil
 import subprocess
 import sys
 import threading
+from PIL import Image, ImageTk
 from pathlib import Path
 from tkinter import BooleanVar, DoubleVar, StringVar, Tk, filedialog, messagebox
 from tkinter import ttk
@@ -432,7 +433,7 @@ class ITunesHeader(tk.Canvas):
         stop_command: object,
         diagnostics_command: object,
     ) -> None:
-        super().__init__(master, height=92, bg=METAL_BG, highlightthickness=0, bd=0)
+        super().__init__(master, height=170, bg=METAL_BG, highlightthickness=0, bd=0)
         self.status_var = status_var
         self.progress_var = progress_var
         self.start_command = start_command
@@ -455,15 +456,34 @@ class ITunesHeader(tk.Canvas):
         self.tag_bind("stop_button", "<Leave>", lambda _event: self._leave_button())
         self.tag_bind("diagnostics_button", "<Leave>", lambda _event: self._leave_button())
 
-    def _load_logo(self) -> tk.PhotoImage | None:
-        logo_path = base_path() / "assets" / "logomusictool.png"
+    def _load_logo(self) -> ImageTk.PhotoImage | None:
+        logo_path = base_path() / "assets" / "app_icon.png"
+
         if not logo_path.exists():
             return None
+
         try:
-            source = tk.PhotoImage(file=str(logo_path))
-            factor = max(1, (max(source.width(), source.height()) + 89) // 90)
-            return source.subsample(factor, factor)
-        except tk.TclError:
+            target_size = 150
+
+            image = Image.open(logo_path).convert("RGBA")
+
+            # Recorta márgenes transparentes
+            alpha = image.getchannel("A")
+            bbox = alpha.getbbox()
+
+            if bbox:
+                image = image.crop(bbox)
+
+            # Redimensionado de alta calidad
+            image = image.resize(
+                (target_size, target_size),
+                Image.Resampling.LANCZOS
+            )
+
+            return ImageTk.PhotoImage(image)
+
+        except Exception as exc:
+            print(exc)
             return None
 
     def _press(self, tag: str) -> None:
@@ -505,18 +525,27 @@ class ITunesHeader(tk.Canvas):
     def _paint(self, width: int) -> None:
         self.delete("all")
 
-        for y in range(0, 92, 3):
+        for y in range(0, 170, 3):
             color = "#c8c8c8" if y % 6 == 0 else "#adadad"
             self.create_line(0, y, width, y, fill=color)
 
-        self.create_text(width // 2, 18, text=APP_NAME, font=("Helvetica", 16, "bold"), fill="#111111")
+        header_center_y = 88
 
-        display_w = min(440, max(320, width - 640))
+        self.create_text(
+            width // 2,
+            34,
+            text=APP_NAME,
+            font=("Helvetica", 16, "bold"),
+            fill="#111111",
+        )
+
+        display_w = min(470, max(340, width - 700))
         display_x = (width - display_w) // 2
-        button_y = 54
-        start_x = max(126, display_x - 146)
-        stop_x = start_x + 64
-        logo_x = start_x - 80
+
+        button_y = header_center_y
+        start_x = display_x - 150
+        stop_x = start_x + 66
+        logo_x = start_x - 118
         self.button_bounds = {
             "start_button": (start_x - 28, button_y - 28, start_x + 28, button_y + 28),
             "stop_button": (stop_x - 28, button_y - 28, stop_x + 28, button_y + 28),
@@ -616,9 +645,9 @@ class ITunesHeader(tk.Canvas):
         draw_rounded_rect(
             self,
             display_x,
-            30,
+            56,
             display_x + display_w,
-            78,
+            112,
             26,
             fill=DISPLAY_FILL,
             outline=DISPLAY_BORDER,
@@ -627,15 +656,15 @@ class ITunesHeader(tk.Canvas):
         )
         self.create_text(
             display_x + display_w // 2,
-            50,
+            78,
             text=self.status_var.get(),
             font=("Helvetica", 13, "bold"),
             fill="#1b1b1b",
         )
         progress_x1 = display_x + 72
         progress_x2 = display_x + display_w - 72
-        progress_y1 = 62
-        progress_y2 = 69
+        progress_y1 = 94
+        progress_y2 = 101
         try:
             progress = max(0.0, min(1.0, float(self.progress_var.get())))
         except (tk.TclError, ValueError):
@@ -647,14 +676,14 @@ class ITunesHeader(tk.Canvas):
 
         search_w = 112
         search_x = width - search_w - 56
-        self.button_bounds["diagnostics_button"] = (search_x, 39, search_x + search_w, 69)
+        self.button_bounds["diagnostics_button"] = (search_x, 72, search_x + search_w, 102)
         diagnostic_pressed = self.pressed_tag == "diagnostics_button"
         draw_capsule(
             self,
             search_x,
-            39,
+            72,
             search_x + search_w,
-            69,
+            102,
             fill="#cfe7c8" if not diagnostic_pressed else "#b9dcae",
             outline="#6f9366",
             width=2,
@@ -662,7 +691,7 @@ class ITunesHeader(tk.Canvas):
         )
         self.create_text(
             search_x + search_w // 2,
-            55,
+            88,
             text="Diagnóstico",
             font=("Helvetica", 10, "bold"),
             fill="#173317",
@@ -674,8 +703,8 @@ class MusicToolApp(Tk):
     def __init__(self) -> None:
         super().__init__()
         self.title(APP_NAME)
-        self.geometry("1120x820")
-        self.minsize(1020, 740)
+        self.geometry("1280x980")
+        self.minsize(1180, 900) 
 
         self.files: list[str] = []
         self.output_dir = StringVar(value="")
