@@ -35,6 +35,14 @@ En macOS también puedes abrir:
 abrir_music_tool.command
 ```
 
+También se incluye un lanzador de aplicación para el Dock:
+
+```txt
+Music Tool.app
+```
+
+Para usarlo, abre o arrastra `Music Tool.app` al Dock desde la carpeta del proyecto. El icono está generado desde el logo de Music Tool en formato cuadrado glassmorphism y el lanzador busca la app dentro de esta carpeta o, como alternativa, en `~/music-tool`.
+
 ## Fase 1 incluida
 
 - Interfaz Tkinter/ttk ligera.

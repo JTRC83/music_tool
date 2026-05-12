@@ -1,0 +1,13 @@
+#!/bin/bash
+
+set -e
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+PROJECT_DIR="$(cd "$SCRIPT_DIR/../../.." && pwd)"
+
+if [ ! -f "$PROJECT_DIR/app.py" ]; then
+  PROJECT_DIR="$HOME/music-tool"
+fi
+
+cd "$PROJECT_DIR"
+exec /Library/Frameworks/Python.framework/Versions/3.11/bin/python3.11 app.py
