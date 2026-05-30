@@ -1832,7 +1832,7 @@ class MusicToolApp(Tk):
         self.log_message("")
         self.log_message("=== YouTube / URL ===")
         self.log_message(f"URL: {url}")
-        self.log_message("Modo: extraer la mejor pista de audio disponible y convertirla a MP3")
+        self.log_message("Modo: extraer solo el vídeo indicado, ignorar playlists/radio y convertir a MP3")
         self.log_message(f"Carpeta de salida: {output_dir}")
         self.after(0, lambda: self.set_progress(0.35))
 
@@ -1913,6 +1913,7 @@ class MusicToolApp(Tk):
             "mp3",
             "--audio-quality",
             "0",
+            "--no-playlist",
             "--no-overwrites",
             "--restrict-filenames",
             "--embed-metadata",
