@@ -62,6 +62,32 @@ def find_binary(name: str) -> str | None:
     return shutil.which(name)
 
 
+def yt_dlp_command_prefix(path: str) -> list[str]:
+    """Run local yt-dlp Python bundles with the same Python that runs the app."""
+    candidate = Path(path)
+    if candidate.is_dir():
+        return [sys.executable, str(candidate)]
+
+    try:
+        header = candidate.read_bytes()[:256]
+    except OSError:
+        return [path]
+
+    if header.startswith(b"PK"):
+        return [sys.executable, str(candidate)]
+
+    if header.startswith(b"#!"):
+        first_line = header.splitlines()[0].decode("utf-8", errors="ignore").lower()
+        if "python" in first_line:
+            return [sys.executable, str(candidate)]
+
+    mach_o_headers = (b"\xfe\xed\xfa\xce", b"\xce\xfa\xed\xfe", b"\xfe\xed\xfa\xcf", b"\xcf\xfa\xed\xfe", b"\xca\xfe\xba\xbe")
+    if header.startswith(mach_o_headers):
+        return [path]
+
+    return [path]
+
+
 def format_size(path: str | Path) -> str:
     size = Path(path).stat().st_size
     if size < 1024:
@@ -974,17 +1000,21 @@ class MusicToolApp(Tk):
 
         binary_path = Path(path)
         location = "bin" if binary_path.parent == base_path() / "bin" else "PATH"
-        if not os.access(path, os.X_OK):
+        command_prefix = yt_dlp_command_prefix(path) if name == "yt-dlp" else [path]
+        if command_prefix == [path] and not os.access(path, os.X_OK):
             return [("SIN PERMISO", name, f"{path} - ejecuta chmod +x")]
 
         version = self._binary_version(name, path)
+        detail = f"{location} - {path}"
+        if name == "yt-dlp" and command_prefix != [path]:
+            detail = f"{location} - {path} usando {command_prefix[0]}"
         return [
-            ("OK", name, f"{location} - {path}"),
+            ("OK", name, detail),
             ("OK", f"{name} versión", version),
         ]
 
     def _binary_version(self, name: str, path: str) -> str:
-        command = [path, "--version"] if name == "yt-dlp" else [path, "-version"]
+        command = [*yt_dlp_command_prefix(path), "--version"] if name == "yt-dlp" else [path, "-version"]
         try:
             result = subprocess.run(command, capture_output=True, text=True, timeout=5)
         except (OSError, subprocess.TimeoutExpired) as exc:
@@ -1772,7 +1802,8 @@ class MusicToolApp(Tk):
         if not yt_dlp:
             self.show_error("No se ha encontrado yt-dlp. Añádelo a bin/ o al PATH.")
             return
-        if not os.access(yt_dlp, os.X_OK):
+        yt_dlp_prefix = yt_dlp_command_prefix(yt_dlp)
+        if yt_dlp_prefix == [yt_dlp] and not os.access(yt_dlp, os.X_OK):
             self.show_error(f"yt-dlp no tiene permisos de ejecución:\n{yt_dlp}")
             return
 
@@ -1872,8 +1903,9 @@ class MusicToolApp(Tk):
         assert yt_dlp is not None
         assert ffmpeg is not None
         output_template = str(output_dir / "%(title)s [%(id)s].%(ext)s")
+        yt_dlp_prefix = yt_dlp_command_prefix(yt_dlp)
         command = [
-            yt_dlp,
+            *yt_dlp_prefix,
             "-f",
             "bestaudio/best",
             "-x",
@@ -1892,7 +1924,7 @@ class MusicToolApp(Tk):
             url,
         ]
         if skip_certificate_check:
-            command.insert(1, "--no-check-certificates")
+            command.insert(len(yt_dlp_prefix), "--no-check-certificates")
         return command
 
     def _is_ssl_certificate_error(self, stdout: str, stderr: str) -> bool:
@@ -1906,6 +1938,13 @@ class MusicToolApp(Tk):
                 "1. Que la fecha y hora del sistema sean correctas.\n"
                 "2. Que el binario bin/yt-dlp esté actualizado.\n"
                 "3. Que la conexión a internet no esté bloqueando YouTube.\n\n"
+                "El detalle técnico completo queda guardado en el registro."
+            )
+        if "unsupported version of Python" in message or "Only Python versions 3.10 and above" in message:
+            return (
+                "yt-dlp se ha intentado ejecutar con un Python antiguo del sistema.\n\n"
+                "Music Tool debe abrirse con Python 3.11 y ahora intenta lanzar el yt-dlp local usando ese mismo Python.\n"
+                "Actualiza la app con git pull, abre Music Tool.app o abrir_music_tool.command, y vuelve a probar.\n\n"
                 "El detalle técnico completo queda guardado en el registro."
             )
         if "HTTP Error 403" in message or "Sign in" in message:
