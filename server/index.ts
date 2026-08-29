@@ -162,7 +162,8 @@ app.post('/api/convert', async (req, res) => {
   const results: Array<{ file: string; status: string; outputSize?: number }> = [];
 
   for (const file of files as string[]) {
-    const baseName = file.replace(/\.[^.]+$/, '');
+    const fileName = file.split('/').pop() || file;  // just the filename, no path
+    const baseName = fileName.replace(/\.[^.]+$/, '');
     const ext = conversionExtension(format);
     let outputPath = join(outputDir, `${baseName}${ext}`);
 
@@ -260,10 +261,10 @@ app.post('/api/export-editor', async (req, res) => {
   // Audio filters (same logic as app.py _build_editor_audio_filters)
   const filters: string[] = [];
   if (start != null || end != null) {
-    const parts = ['atrim'];
+    const parts: string[] = [];
     if (start != null) parts.push(`start=${start}`);
     if (end != null) parts.push(`end=${end}`);
-    filters.push(parts.join(':'));
+    filters.push(`atrim=${parts.join(':')}`);
     filters.push('asetpts=PTS-STARTPTS');
   }
   if (fadeIn && fadeIn > 0) {

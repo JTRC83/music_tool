@@ -28,6 +28,7 @@ const state = {
   quality: '320k',
   overwrite: false,
   editorOutputDir: '',
+  editorFilePath: '',
   urlOutputDir: '',
   isConverting: false,
 };
@@ -200,19 +201,19 @@ const dialFormato = createDial(
 );
 
 document.getElementById('btn-add-files')!.addEventListener('click', () => {
-  const input = document.createElement('input');
-  input.type = 'file';
-  input.multiple = true;
-  input.accept = '.flac,.mp3,.wav,.m4a,.aac';
-  input.onchange = () => {
-    const fileList = Array.from(input.files || []);
-    fileList.forEach(f => {
-      state.files.push((f as any).path);
-      addSongRow((f as any).path, f.name);
-    });
-    log(`Añadidas ${fileList.length} canciones`);
-  };
-  input.click();
+  // Browsers don't expose file paths from <input type="file">. For a local
+  // app that passes paths to ffmpeg, we ask the user to paste full paths
+  // (one per line). The file picker still works for the filename, but we
+  // need the absolute path.
+  const input = prompt('Rutas absolutas de las canciones (una por línea):\n(ej: /Users/joantoniramoncrespi/Music/song.mp3)');
+  if (!input || !input.trim()) return;
+  const paths = input.trim().split('\n').map(p => p.trim()).filter(Boolean);
+  paths.forEach(p => {
+    const name = p.split('/').pop() || p;
+    state.files.push(p);
+    addSongRow(p, name);
+  });
+  log(`Añadidas ${paths.length} canciones`);
 });
 
 function addSongRow(path: string, name: string) {
@@ -240,9 +241,9 @@ document.getElementById('btn-clear-files')!.addEventListener('click', () => {
 });
 
 document.getElementById('btn-output-dir')!.addEventListener('click', async () => {
-  const dir = await (window as any).showDirectoryPicker?.() || prompt('Ruta de la carpeta de salida:');
-  if (dir) {
-    state.outputDir = typeof dir === 'string' ? dir : dir.name;
+  const dir = prompt('Ruta absoluta de la carpeta de salida:\n(ej: /Users/joantoniramoncrespi/Music)');
+  if (dir && dir.trim()) {
+    state.outputDir = dir.trim();
     document.getElementById('output-label')!.textContent = `Carpeta de salida: ${state.outputDir}`;
     log(`Carpeta de salida: ${state.outputDir}`);
   }
@@ -350,9 +351,12 @@ document.getElementById('btn-diag')!.addEventListener('click', async () => {
 // ── URL tab ─────────────────────────────────────────────
 
 document.getElementById('btn-url-output-dir')!.addEventListener('click', async () => {
-  const dir = await (window as any).showDirectoryPicker?.() || prompt('Ruta de la carpeta de salida:');
-  if (dir) {
-    state.urlOutputDir = typeof dir === 'string' ? dir : dir.name;
+  // showDirectoryPicker only gives the folder name, not the full path.
+  // For a local app that passes the path to yt-dlp/ffmpeg, we need the
+  // absolute path. Use a prompt where the user types or pastes it.
+  const dir = prompt('Ruta absoluta de la carpeta de salida:\n(ej: /Users/joantoniramoncrespi/Music)');
+  if (dir && dir.trim()) {
+    state.urlOutputDir = dir.trim();
     log(`Carpeta URL: ${state.urlOutputDir}`);
   }
 });
@@ -387,54 +391,50 @@ document.getElementById('btn-extract-url')!.addEventListener('click', async () =
 
 // ── Editor tab ──────────────────────────────────────────
 
-document.getElementById('btn-load-editor')!.addEventListener('click', () => {
-  const input = document.createElement('input');
-  input.type = 'file';
-  input.accept = '.flac,.mp3,.wav,.m4a,.aac';
-  input.onchange = async () => {
-    const file = input.files?.[0];
-    if (!file) return;
-    document.getElementById('editor-file')!.textContent = file.name;
-    log(`Cargando: ${file.name}`);
+document.getElementById('btn-load-editor')!.addEventListener('click', async () => {
+  const filePath = prompt('Ruta absoluta de la canción:\n(ej: /Users/joantoniramoncrespi/Music/song.mp3)');
+  if (!filePath || !filePath.trim()) return;
+  const path = filePath.trim();
+  const name = path.split('/').pop() || path;
+  state.editorFilePath = path;
+  document.getElementById('editor-file')!.textContent = name;
+  log(`Cargando: ${name}`);
 
-    const result = await api('probe', { filePath: (file as any).path });
-    if (result.error) {
-      log(`Error: ${result.error}`);
-      return;
-    }
+  const result = await api('probe', { filePath: path });
+  if (result.error) {
+    log(`Error: ${result.error}`);
+    return;
+  }
 
-    document.getElementById('editor-info')!.textContent =
-      `Duración: ${result.durationFormatted} | Peso: ${result.sizeFormatted} | Bitrate: ${result.bitrateFormatted}`;
+  document.getElementById('editor-info')!.textContent =
+    `Duración: ${result.durationFormatted} | Peso: ${result.sizeFormatted} | Bitrate: ${result.bitrateFormatted}`;
 
-    const meta = result.metadata || {};
-    const fields = ['title', 'artist', 'album', 'date', 'genre', 'composer', 'track'];
-    fields.forEach(f => {
-      const el = document.getElementById(`meta-${f}`) as HTMLInputElement;
-      if (el) { el.value = meta[f] || ''; el.disabled = false; }
-    });
+  const meta = result.metadata || {};
+  const fields = ['title', 'artist', 'album', 'date', 'genre', 'composer', 'track'];
+  fields.forEach(f => {
+    const el = document.getElementById(`meta-${f}`) as HTMLInputElement;
+    if (el) { el.value = meta[f] || ''; el.disabled = false; }
+  });
 
-    log(`Canción cargada: ${file.name}`);
-  };
-  input.click();
+  log(`Canción cargada: ${name}`);
 });
 
 document.getElementById('btn-editor-output-dir')!.addEventListener('click', async () => {
-  const dir = await (window as any).showDirectoryPicker?.() || prompt('Ruta de la carpeta de salida:');
-  if (dir) {
-    state.editorOutputDir = typeof dir === 'string' ? dir : dir.name;
+  const dir = prompt('Ruta absoluta de la carpeta de salida:\n(ej: /Users/joantoniramoncrespi/Music)');
+  if (dir && dir.trim()) {
+    state.editorOutputDir = dir.trim();
     document.getElementById('editor-output-dir')!.textContent = state.editorOutputDir;
   }
 });
 
 document.getElementById('btn-generate-waveform')!.addEventListener('click', async () => {
-  const file = document.getElementById('editor-file')!.textContent;
-  if (!file || file === 'Sin canción cargada') { log('Carga una canción primero'); return; }
+  if (!state.editorFilePath) { log('Carga una canción primero'); return; }
 
   setStatus('Generando forma de onda...');
   const res = await fetch('/api/generate-waveform', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ filePath: file }),
+    body: JSON.stringify({ filePath: state.editorFilePath }),
   });
   if (res.ok) {
     const blob = await res.blob();
@@ -450,8 +450,7 @@ document.getElementById('btn-generate-waveform')!.addEventListener('click', asyn
 });
 
 document.getElementById('btn-export-editor')!.addEventListener('click', async () => {
-  const file = document.getElementById('editor-file')!.textContent;
-  if (!file || file === 'Sin canción cargada') { log('Carga una canción primero'); return; }
+  if (!state.editorFilePath) { log('Carga una canción primero'); return; }
   if (!state.editorOutputDir) { log('Selecciona una carpeta de salida'); return; }
 
   setStatus('Exportando canción editada...');
@@ -473,11 +472,11 @@ document.getElementById('btn-export-editor')!.addEventListener('click', async ()
     return null;
   };
 
-  const baseName = file.replace(/\.[^.]+$/, '');
+  const baseName = state.editorFilePath.replace(/\.[^.]+$/, '').split('/').pop() || 'output';
   const outputPath = `${state.editorOutputDir}/${baseName}_editado.mp3`;
 
   const result = await api('export-editor', {
-    sourcePath: file,
+    sourcePath: state.editorFilePath,
     outputPath,
     start: parseTime((document.getElementById('edit-start') as HTMLInputElement).value),
     end: parseTime((document.getElementById('edit-end') as HTMLInputElement).value),
