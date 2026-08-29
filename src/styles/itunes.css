@@ -47,8 +47,8 @@ body {
 }
 
 .header-logo {
-  width: 120px; height: 120px;
-  border-radius: var(--radius-sm);
+  width: 200px; height: 200px;
+  border-radius: 50%;
   object-fit: contain;
 }
 
