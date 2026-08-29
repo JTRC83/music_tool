@@ -4,3 +4,9 @@ __pycache__/
 .DS_Store
 waveform_editor.png
 *.log
+node_modules/
+dist/
+.atl/
+assets/generated/
+cançons youtube/
+can\303\247ons youtube/

@@ -1,0 +1,294 @@
+/* ═══════════════════════════════════════════════════════
+   Amplificador de válvulas — componente del usuario
+   ═══════════════════════════════════════════════════════ */
+
+.vx-container {
+  --vx-wood-base: #3e2723;
+  --vx-wood-grain: #281510;
+  --vx-metal-face: #d8d8d8;
+  --vx-metal-shadow: #999;
+  --vx-glass-coating: rgba(200, 220, 255, 0.1);
+  --vx-filament-off: #4a3b3b;
+  --vx-filament-on: #ff8800;
+  --vx-glow-color: rgba(255, 160, 50, 0.6);
+  --vx-jewel-off: #400;
+  --vx-jewel-on: #ff0000;
+  margin: 0;
+  background: transparent;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: "Jura", sans-serif;
+  overflow: hidden;
+  border-radius: var(--radius);
+}
+
+.vx-amp {
+  width: 280px;
+  height: 320px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  box-shadow:
+    0 20px 40px rgba(0, 0, 0, 0.8),
+    0 5px 10px rgba(0, 0, 0, 0.6);
+  border-radius: 8px;
+  background: linear-gradient(180deg, #d8d8d8 0%, #b0b0b0 100%);
+  border: 2px solid #999;
+}
+
+.vx-inputs { display: none; }
+
+/* Wood removed — all metallic now */
+.vx-wood { display: none; }
+
+.vx-amp::before,
+.vx-amp::after {
+  content: "";
+  position: absolute;
+  width: 10px; height: 10px;
+  background: radial-gradient(circle, #eee, #888);
+  border-radius: 50%;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.5);
+  border: 1px solid #777;
+  z-index: 10;
+}
+.vx-amp::before {
+  top: 6px; left: 6px;
+}
+.vx-amp::after {
+  top: 6px; right: 6px;
+}
+
+.vx-bay {
+  height: 120px;
+  background: #1a1a1a;
+  position: relative;
+  margin: 12px 12px 0 12px;
+  border-radius: 4px 4px 0 0;
+  box-shadow: inset 0 0 40px #000, inset 0 2px 4px rgba(255,255,255,0.1);
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  padding-bottom: 12px;
+  gap: 18px;
+  z-index: 2;
+  overflow: hidden;
+  border: 1px solid #888;
+}
+
+.vx-bay::before {
+  content: "";
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 60px;
+  background: linear-gradient(to bottom, rgba(255,255,255,0.05), transparent);
+  z-index: 0;
+}
+
+.vx-tube { width: 42px; height: 80px; position: relative; z-index: 5; }
+
+.vx-glass {
+  width: 100%; height: 100%;
+  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.15), var(--vx-glass-coating) 40%, rgba(20,20,20,0.4) 95%);
+  border-radius: 35px 35px 5px 5px;
+  border: 1px solid rgba(255,255,255,0.15);
+  position: relative;
+  overflow: hidden;
+  box-shadow: inset 0 0 15px rgba(0,0,0,0.9), 0 10px 20px rgba(0,0,0,0.5);
+}
+
+.vx-glass::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 40px;
+  background: radial-gradient(at 40% 20%, #888, #222 70%);
+  opacity: 0.8;
+  mask-image: linear-gradient(to bottom, black, transparent);
+  -webkit-mask-image: linear-gradient(to bottom, black, transparent);
+}
+
+.vx-plate {
+  position: absolute;
+  top: 25px; left: 15px; right: 15px; bottom: 15px;
+  background: linear-gradient(90deg, #222, #444, #222);
+  border-radius: 4px;
+  border: 1px solid #555;
+  box-shadow: inset 0 0 5px #000;
+}
+.vx-plate::after {
+  content: "";
+  position: absolute;
+  top: 10%; left: 30%;
+  width: 40%; height: 60%;
+  background: repeating-linear-gradient(0deg, #111 0, #111 2px, transparent 2px, transparent 6px);
+}
+
+.vx-heater {
+  position: absolute;
+  bottom: 30px; left: 50%;
+  transform: translateX(-50%);
+  width: 2px; height: 60px;
+  background-color: var(--vx-filament-off);
+  box-shadow: 0 0 0 var(--vx-glow-color);
+  transition: background-color 3s ease-in, box-shadow 3s ease-in;
+  z-index: 10;
+}
+.vx-heater::before {
+  content: ""; position: absolute;
+  top: 0; left: -3px;
+  width: 8px; height: 8px;
+  background: inherit; border-radius: 50%;
+  box-shadow: inherit;
+}
+.vx-heater::after {
+  content: ""; position: absolute;
+  bottom: 0; left: -3px;
+  width: 8px; height: 8px;
+  background: inherit; border-radius: 50%;
+  box-shadow: inherit;
+}
+
+.vx-glow {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 150%; height: 100%;
+  background: radial-gradient(circle, var(--vx-glow-color) 0%, transparent 60%);
+  opacity: 0;
+  transition: opacity 3s ease-in-out;
+  mix-blend-mode: color-dodge;
+  pointer-events: none;
+}
+
+.vx-face {
+  flex-grow: 1;
+  margin: 0 15px 15px 15px;
+  background: linear-gradient(180deg, #e0e0e0 0%, #b0b0b0 100%);
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.8), 0 -2px 10px rgba(0,0,0,0.5);
+}
+.vx-face::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-image: repeating-linear-gradient(90deg, transparent 0, transparent 1px, rgba(0,0,0,0.05) 2px);
+  pointer-events: none;
+}
+
+.vx-bolt {
+  position: absolute;
+  width: 12px; height: 12px;
+  background: radial-gradient(circle, #eee, #888);
+  border-radius: 50%;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.5);
+  border: 1px solid #777;
+}
+.vx-bolt::after {
+  content: "";
+  position: absolute;
+  top: 50%; left: 15%;
+  width: 70%; height: 1px;
+  background: #444;
+}
+.vx-tl { top: 10px; left: 10px; transform: rotate(45deg); }
+.vx-tr { top: 10px; right: 10px; transform: rotate(15deg); }
+.vx-bl { bottom: 10px; left: 10px; transform: rotate(90deg); }
+.vx-br { bottom: 10px; right: 10px; transform: rotate(30deg); }
+
+.vx-meters {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  position: relative;
+}
+
+.vx-meter {
+  width: 90px; height: 70px;
+  background: #fdf6e3;
+  border: 2px solid #555;
+  border-radius: 4px;
+  position: relative;
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.3);
+  overflow: hidden;
+}
+
+.vx-backlight {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: radial-gradient(circle, #fffacd 20%, transparent 80%);
+  opacity: 0;
+  transition: opacity 1s 1s;
+  mix-blend-mode: multiply;
+}
+
+.vx-scale {
+  position: absolute;
+  top: 10px; left: 10px; right: 10px; bottom: 0;
+  border-top: 1px solid #333;
+  border-radius: 50% 50% 0 0;
+}
+.vx-text {
+  position: absolute;
+  bottom: 25px;
+  width: 100%;
+  text-align: center;
+  font-size: 0.6rem;
+  color: #444;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+.vx-needle {
+  position: absolute;
+  bottom: 10px; left: 50%;
+  width: 1px; height: 50px;
+  background: #d00;
+  transform-origin: bottom center;
+  transform: rotate(-45deg);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 5;
+  filter: drop-shadow(1px 1px 1px rgba(0,0,0,0.3));
+}
+
+.vx-meter::after {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+/* Power on states */
+#vx-pwr:checked ~ .vx-amp .vx-bay .vx-tube .vx-heater {
+  background-color: #fff;
+  box-shadow: 0 0 5px #fff, 0 0 10px var(--vx-filament-on), 0 0 20px var(--vx-filament-on);
+}
+#vx-pwr:checked ~ .vx-amp .vx-bay .vx-tube .vx-glow { opacity: 0.8; }
+#vx-pwr:checked ~ .vx-amp .vx-face .vx-meters .vx-meter .vx-backlight { opacity: 1; }
+#vx-pwr:checked ~ .vx-amp .vx-face .vx-meters .vx-meter:nth-child(1) .vx-needle {
+  animation: vx-bounce 0.5s infinite alternate ease-in-out;
+  animation-delay: 2s;
+}
+#vx-pwr:checked ~ .vx-amp .vx-face .vx-meters .vx-meter:nth-child(2) .vx-needle {
+  animation: vx-bounce 0.6s infinite alternate ease-in-out;
+  animation-delay: 2.1s;
+}
+
+@keyframes vx-bounce {
+  0% { transform: rotate(-45deg); }
+  20% { transform: rotate(-10deg); }
+  40% { transform: rotate(-30deg); }
+  60% { transform: rotate(10deg); }
+  80% { transform: rotate(-5deg); }
+  100% { transform: rotate(20deg); }
+}

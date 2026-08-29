@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="/app_icon.png" />
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#d0d0d0" />
+  <title>Music Tool</title>
+</head>
+<body>
+  <div id="app">
+    <!-- Header: logo + play/stop + display de estado + loader -->
+    <header class="itunes-header">
+      <div class="header-left">
+        <img src="/app_icon.png" alt="Music Tool" class="header-logo" />
+      </div>
+      <div class="header-center">
+        <div class="header-buttons">
+          <button class="onoff-btn" id="btn-play" aria-label="Play">
+            <svg class="onoff-btn-icon" stroke-width="3" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M8 5v14l11-7z" stroke-linejoin="round" stroke-linecap="round"></path>
+            </svg>
+          </button>
+          <button class="onoff-btn" id="btn-stop" aria-label="Stop">
+            <svg class="onoff-btn-icon" stroke-width="3" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <rect x="7" y="7" width="10" height="10" stroke-linejoin="round" stroke-linecap="round"></rect>
+            </svg>
+          </button>
+        </div>
+        <div class="header-display">
+          <div class="display-text" id="status-text">Listo</div>
+          <div class="loader-bar">
+            <div class="loader-fill" id="loader-fill"></div>
+          </div>
+        </div>
+      </div>
+      <div class="header-right">
+        <button class="onoff-btn" id="btn-diag" aria-label="Diagnóstico">
+          <svg class="onoff-btn-icon" stroke-width="2.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none">
+            <path d="M14.7 6.3a4 4 0 0 0-5.6 5.6L3 18l3 3 6.1-6.1a4 4 0 0 0 5.6-5.6l-2.5 2.5-2.1-2.1 2.6-2.4z" stroke-linejoin="round" stroke-linecap="round"></path>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Tabs -->
+    <nav class="tab-nav">
+      <button class="tab-btn active" data-tab="conversion">
+        <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4z M4 9h16 M9 4v16" stroke-linejoin="round" stroke-linecap="round"/></svg>
+        Conversión
+      </button>
+      <button class="tab-btn" data-tab="editor">
+        <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 4v8 M8 8l4-4 4 4 M4 20h16" stroke-linejoin="round" stroke-linecap="round"/></svg>
+        Editor de canción
+      </button>
+      <button class="tab-btn" data-tab="url">
+        <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 17H7A5 5 0 0 1 7 7h2 M15 7h2a5 5 0 0 1 0 10h-2 M8 12h8" stroke-linejoin="round" stroke-linecap="round"/></svg>
+        YouTube / URL
+      </button>
+    </nav>
+
+    <!-- Tab: Conversión -->
+    <section class="tab-panel active" id="tab-conversion">
+      <div class="card conversion-card">
+        <div class="card-body conversion-body">
+          <div class="conversion-left">
+            <button class="button" id="btn-add-files"><div class="button-outer"><div class="button-inner"><span>Añadir canciones</span></div></div></button>
+            <button class="button" id="btn-remove-selected"><div class="button-outer"><div class="button-inner"><span>Quitar seleccionado</span></div></div></button>
+            <button class="button" id="btn-clear-files"><div class="button-outer"><div class="button-inner"><span>Vaciar lista</span></div></div></button>
+            <button class="button" id="btn-output-dir"><div class="button-outer"><div class="button-inner"><span>Seleccionar carpeta</span></div></div></button>
+            <label class="checkbox-row">
+              <input type="checkbox" id="chk-overwrite" /> Sobrescribir existentes
+            </label>
+          </div>
+          <div class="conversion-amp">
+            <div class="vx-container">
+              <input type="checkbox" id="vx-pwr" class="vx-inputs" />
+              <div class="vx-amp">
+                <div class="vx-bay">
+                  <div class="vx-tube"><div class="vx-glass"><div class="vx-plate"></div><div class="vx-heater"></div><div class="vx-glow"></div></div></div>
+                  <div class="vx-tube"><div class="vx-glass"><div class="vx-plate"></div><div class="vx-heater"></div><div class="vx-glow"></div></div></div>
+                  <div class="vx-tube"><div class="vx-glass"><div class="vx-plate"></div><div class="vx-heater"></div><div class="vx-glow"></div></div></div>
+                </div>
+                <div class="vx-face">
+                  <div class="vx-bolt vx-tl"></div><div class="vx-bolt vx-tr"></div>
+                  <div class="vx-bolt vx-bl"></div><div class="vx-bolt vx-br"></div>
+                  <div class="vx-meters">
+                    <div class="vx-meter"><div class="vx-backlight"></div><div class="vx-scale"></div><div class="vx-text">L . CH</div><div class="vx-needle"></div></div>
+                    <div class="vx-meter"><div class="vx-backlight"></div><div class="vx-scale"></div><div class="vx-text">R . CH</div><div class="vx-needle"></div></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="conversion-right">
+            <div class="dials-row">
+              <div class="dial-wrapper">
+                <div class="dial-label">Formato</div>
+                <div class="cw-input" id="dial-formato"></div>
+              </div>
+              <div class="dial-wrapper">
+                <div class="dial-label">Calidad</div>
+                <div class="cw-input" id="dial-calidad"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="output-label" id="output-label">Carpeta de salida: sin seleccionar</div>
+      <div class="card">
+        <h3 class="card-title">Canciones cargadas</h3>
+        <div class="card-body">
+          <table class="songs-table" id="songs-table">
+            <thead>
+              <tr>
+                <th>Canción</th><th>Formato</th><th>Peso original</th>
+                <th>Peso final</th><th>Calidad</th><th>Estado</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tab: Editor -->
+    <section class="tab-panel" id="tab-editor">
+      <div class="card">
+        <h3 class="card-title">1. Canción</h3>
+        <div class="card-body">
+          <button class="button" id="btn-load-editor"><div class="button-outer"><div class="button-inner"><span>Cargar canción</span></div></div></button>
+          <span class="editor-file" id="editor-file">Sin canción cargada</span>
+          <div class="editor-info" id="editor-info">Duración: - | Peso: - | Bitrate: -</div>
+        </div>
+      </div>
+      <div class="editor-row">
+        <div class="card">
+          <h3 class="card-title">2. Metadatos</h3>
+          <div class="card-body">
+            <div class="metadata-grid">
+              <label>Título</label><input type="text" id="meta-title" disabled class="span2" />
+              <label>Artista / Grupo</label><input type="text" id="meta-artist" disabled class="span2" />
+              <label>Álbum</label><input type="text" id="meta-album" disabled class="span2" />
+              <label>Año</label><input type="text" id="meta-date" disabled />
+              <label>Género</label><input type="text" id="meta-genre" disabled />
+              <label>Compositor</label><input type="text" id="meta-composer" disabled class="span2" />
+              <label>Número de pista</label><input type="text" id="meta-track" disabled class="span2" />
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <h3 class="card-title">3. Edición y exportación</h3>
+          <div class="card-body">
+            <div class="edit-grid">
+              <label>Inicio</label><input type="text" id="edit-start" />
+              <label>Final</label><input type="text" id="edit-end" />
+              <label>Fade in</label><input type="text" id="edit-fade-in" />
+              <label>Fade out</label><input type="text" id="edit-fade-out" />
+              <div class="edit-pair">
+                <label>Volumen</label><input type="text" id="edit-volume" value="1.0" />
+                <label>Calidad</label>
+                <select id="edit-quality">
+                  <option value="128k">128k</option>
+                  <option value="192k">192k</option>
+                  <option value="256k">256k</option>
+                  <option value="320k" selected>320k</option>
+                </select>
+              </div>
+            </div>
+            <div class="edit-buttons">
+              <button class="button" id="btn-editor-output-dir"><div class="button-outer"><div class="button-inner"><span>Seleccionar carpeta</span></div></div></button>
+              <button class="button" id="btn-generate-waveform"><div class="button-outer"><div class="button-inner"><span>Generar forma</span></div></div></button>
+              <button class="button" id="btn-export-editor"><div class="button-outer"><div class="button-inner"><span>Exportar editada</span></div></div></button>
+            </div>
+            <label class="checkbox-row">
+              <input type="checkbox" id="chk-editor-overwrite" /> Sobrescribir
+            </label>
+            <div class="editor-output-dir" id="editor-output-dir"></div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <h3 class="card-title">Edición visual</h3>
+        <div class="card-body">
+          <div class="waveform-container" id="waveform-container">
+            <div class="waveform-placeholder">Pendiente de generar</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tab: YouTube / URL -->
+    <section class="tab-panel" id="tab-url">
+      <div class="card">
+        <h3 class="card-title">1. URL</h3>
+        <div class="card-body">
+          <label>URL</label>
+          <input type="text" id="url-input" placeholder="https://www.youtube.com/watch?v=..." />
+        </div>
+      </div>
+      <div class="card">
+        <h3 class="card-title">2. Extracción de audio</h3>
+        <div class="card-body">
+          <button class="button" id="btn-url-output-dir"><div class="button-outer"><div class="button-inner"><span>Seleccionar carpeta</span></div></div></button>
+          <button class="button" id="btn-extract-url"><div class="button-outer"><div class="button-inner"><span>Extraer MP3</span></div></div></button>
+        </div>
+      </div>
+      <div class="card">
+        <h3 class="card-title">Resultados</h3>
+        <div class="card-body">
+          <table class="results-table" id="url-results-table">
+            <thead><tr><th>Archivo</th><th>Estado</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card">
+        <h3 class="card-title">Uso previsto</h3>
+        <div class="card-body">
+          <p class="note">Esta herramienta extrae audio permitido desde URLs usando yt-dlp. Respeta los derechos de autor y los términos de servicio de cada plataforma.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Log global -->
+    <div class="card log-card">
+      <h3 class="card-title">Registro global</h3>
+      <div class="card-body">
+        <div class="log-output" id="log-output"></div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>
