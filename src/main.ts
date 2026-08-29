@@ -29,6 +29,7 @@ const state = {
   overwrite: false,
   editorOutputDir: '',
   editorFilePath: '',
+  editorDuration: 0,
   urlOutputDir: '',
   isConverting: false,
 };
@@ -175,6 +176,165 @@ function createDial(container: HTMLElement, options: string[], initial: string, 
   }};
 }
 
+// ── Folder browser modal ─────────────────────────────────
+// Reusable dialog that navigates real filesystem folders via /api/browse.
+
+let currentBrowsePath = '';
+
+async function browseFolder(title: string): Promise<string | null> {
+  return new Promise((resolveFn) => {
+    const overlay = document.createElement('div');
+    overlay.className = 'browse-overlay';
+    const modal = document.createElement('div');
+    modal.className = 'browse-modal';
+    const header = document.createElement('div');
+    header.className = 'browse-header';
+    header.innerHTML = `<span>${title}</span>`;
+    const closeBtn = document.createElement('button');
+    closeBtn.className = 'browse-close';
+    closeBtn.textContent = '✕';
+    closeBtn.onclick = () => { overlay.remove(); resolveFn(null); };
+    header.appendChild(closeBtn);
+    const pathDisplay = document.createElement('div');
+    pathDisplay.className = 'browse-path';
+    const list = document.createElement('div');
+    list.className = 'browse-list';
+    const selectBtn = document.createElement('button');
+    selectBtn.className = 'browse-select-btn';
+    selectBtn.textContent = 'Seleccionar esta carpeta';
+    selectBtn.disabled = true;
+    modal.appendChild(header);
+    modal.appendChild(pathDisplay);
+    modal.appendChild(list);
+    modal.appendChild(selectBtn);
+    overlay.appendChild(modal);
+    document.body.appendChild(overlay);
+
+    let selectedPath: string | null = null;
+
+    async function loadDir(path: string) {
+      currentBrowsePath = path;
+      pathDisplay.textContent = path;
+      selectedPath = path;
+      selectBtn.disabled = false;
+      try {
+        const res = await fetch(`/api/browse?path=${encodeURIComponent(path)}`);
+        const data = await res.json();
+        if (data.error) { list.innerHTML = `<div class="browse-error">${data.error}</div>`; return; }
+        list.innerHTML = '';
+        if (data.parent) {
+          const parentItem = document.createElement('div');
+          parentItem.className = 'browse-item browse-parent';
+          parentItem.innerHTML = '📁 ..';
+          parentItem.onclick = () => loadDir(data.parent);
+          list.appendChild(parentItem);
+        }
+        for (const folder of data.folders || []) {
+          const item = document.createElement('div');
+          item.className = 'browse-item browse-folder';
+          item.innerHTML = `📁 ${folder}`;
+          item.onclick = () => loadDir(join(data.current, folder));
+          list.appendChild(item);
+        }
+        for (const file of data.audioFiles || []) {
+          const item = document.createElement('div');
+          item.className = 'browse-item browse-file';
+          item.innerHTML = `🎵 ${file}`;
+          list.appendChild(item);
+        }
+      } catch (err) { list.innerHTML = `<div class="browse-error">Error: ${err}</div>`; }
+    }
+    function join(base: string, name: string): string { return base.endsWith('/') ? base + name : base + '/' + name; }
+    selectBtn.onclick = () => { if (selectedPath) { overlay.remove(); resolveFn(selectedPath); } };
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) { overlay.remove(); resolveFn(null); } });
+    loadDir('');
+  });
+}
+
+// ── Folder + file picker modal ───────────────────────────
+
+async function browseAndPickFiles(title: string): Promise<string[] | null> {
+  return new Promise(async (resolveFn) => {
+    const overlay = document.createElement('div');
+    overlay.className = 'browse-overlay';
+    const modal = document.createElement('div');
+    modal.className = 'browse-modal browse-modal-wide';
+    const header = document.createElement('div');
+    header.className = 'browse-header';
+    header.innerHTML = `<span>${title}</span>`;
+    const closeBtn = document.createElement('button');
+    closeBtn.className = 'browse-close';
+    closeBtn.textContent = '✕';
+    closeBtn.onclick = () => { overlay.remove(); resolveFn(null); };
+    header.appendChild(closeBtn);
+    const pathDisplay = document.createElement('div');
+    pathDisplay.className = 'browse-path';
+    const list = document.createElement('div');
+    list.className = 'browse-list browse-list-tall';
+    const selectBtn = document.createElement('button');
+    selectBtn.className = 'browse-select-btn';
+    selectBtn.textContent = 'Añadir seleccionadas';
+    selectBtn.disabled = true;
+    modal.appendChild(header);
+    modal.appendChild(pathDisplay);
+    modal.appendChild(list);
+    modal.appendChild(selectBtn);
+    overlay.appendChild(modal);
+    document.body.appendChild(overlay);
+
+    const selectedFiles: Set<string> = new Set();
+
+    async function loadDir(path: string) {
+      currentBrowsePath = path;
+      pathDisplay.textContent = path;
+      try {
+        const res = await fetch(`/api/browse?path=${encodeURIComponent(path)}`);
+        const data = await res.json();
+        if (data.error) { list.innerHTML = `<div class="browse-error">${data.error}</div>`; return; }
+        list.innerHTML = '';
+        if (data.parent) {
+          const parentItem = document.createElement('div');
+          parentItem.className = 'browse-item browse-parent';
+          parentItem.innerHTML = '📁 ..';
+          parentItem.onclick = () => loadDir(data.parent);
+          list.appendChild(parentItem);
+        }
+        for (const folder of data.folders || []) {
+          const item = document.createElement('div');
+          item.className = 'browse-item browse-folder';
+          item.innerHTML = `📁 ${folder}`;
+          item.onclick = () => loadDir(join(data.current, folder));
+          list.appendChild(item);
+        }
+        for (const file of data.audioFiles || []) {
+          const fullPath = join(data.current, file);
+          const item = document.createElement('div');
+          item.className = 'browse-item browse-file browse-file-selectable';
+          item.innerHTML = `🎵 ${file}`;
+          if (selectedFiles.has(fullPath)) item.classList.add('browse-file-selected');
+          item.onclick = (e) => {
+            e.stopPropagation();
+            if (selectedFiles.has(fullPath)) { selectedFiles.delete(fullPath); item.classList.remove('browse-file-selected'); }
+            else { selectedFiles.add(fullPath); item.classList.add('browse-file-selected'); }
+            selectBtn.disabled = selectedFiles.size === 0;
+          };
+          list.appendChild(item);
+        }
+      } catch (err) { list.innerHTML = `<div class="browse-error">Error: ${err}</div>`; }
+    }
+    function join(base: string, name: string): string { return base.endsWith('/') ? base + name : base + '/' + name; }
+    selectBtn.onclick = () => { if (selectedFiles.size > 0) { overlay.remove(); resolveFn(Array.from(selectedFiles)); } };
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) { overlay.remove(); resolveFn(null); } });
+    loadDir('');
+  });
+}
+
+async function browseAndPickOneFile(title: string): Promise<string | null> {
+  const files = await browseAndPickFiles(title);
+  if (files && files.length > 0) return files[0];
+  return null;
+}
+
 // ── Conversion tab ──────────────────────────────────────
 
 // Calidad dial must be created FIRST so the formato callback can reference it
@@ -200,20 +360,15 @@ const dialFormato = createDial(
   }
 );
 
-document.getElementById('btn-add-files')!.addEventListener('click', () => {
-  // Browsers don't expose file paths from <input type="file">. For a local
-  // app that passes paths to ffmpeg, we ask the user to paste full paths
-  // (one per line). The file picker still works for the filename, but we
-  // need the absolute path.
-  const input = prompt('Rutas absolutas de las canciones (una por línea):\n(ej: /Users/joantoniramoncrespi/Music/song.mp3)');
-  if (!input || !input.trim()) return;
-  const paths = input.trim().split('\n').map(p => p.trim()).filter(Boolean);
-  paths.forEach(p => {
+document.getElementById('btn-add-files')!.addEventListener('click', async () => {
+  const files = await browseAndPickFiles('Selecciona canciones');
+  if (!files || files.length === 0) return;
+  files.forEach(p => {
     const name = p.split('/').pop() || p;
     state.files.push(p);
     addSongRow(p, name);
   });
-  log(`Añadidas ${paths.length} canciones`);
+  log(`Añadidas ${files.length} canciones`);
 });
 
 function addSongRow(path: string, name: string) {
@@ -241,11 +396,11 @@ document.getElementById('btn-clear-files')!.addEventListener('click', () => {
 });
 
 document.getElementById('btn-output-dir')!.addEventListener('click', async () => {
-  const dir = prompt('Ruta absoluta de la carpeta de salida:\n(ej: /Users/joantoniramoncrespi/Music)');
-  if (dir && dir.trim()) {
-    state.outputDir = dir.trim();
-    document.getElementById('output-label')!.textContent = `Carpeta de salida: ${state.outputDir}`;
-    log(`Carpeta de salida: ${state.outputDir}`);
+  const dir = await browseFolder('Selecciona carpeta de salida');
+  if (dir) {
+    state.outputDir = dir;
+    document.getElementById('output-label')!.textContent = `Carpeta de salida: ${dir}`;
+    log(`Carpeta de salida: ${dir}`);
   }
 });
 
@@ -351,10 +506,8 @@ document.getElementById('btn-diag')!.addEventListener('click', async () => {
 // ── URL tab ─────────────────────────────────────────────
 
 document.getElementById('btn-url-output-dir')!.addEventListener('click', async () => {
-  // showDirectoryPicker only gives the folder name, not the full path.
-  // For a local app that passes the path to yt-dlp/ffmpeg, we need the
-  // absolute path. Use a prompt where the user types or pastes it.
-  const dir = prompt('Ruta absoluta de la carpeta de salida:\n(ej: /Users/joantoniramoncrespi/Music)');
+  const defaultDir = '/Users/joantoniramoncrespi/Desktop/cançons youtube';
+  const dir = prompt('Ruta absoluta de la carpeta de salida:', defaultDir);
   if (dir && dir.trim()) {
     state.urlOutputDir = dir.trim();
     log(`Carpeta URL: ${state.urlOutputDir}`);
@@ -392,9 +545,8 @@ document.getElementById('btn-extract-url')!.addEventListener('click', async () =
 // ── Editor tab ──────────────────────────────────────────
 
 document.getElementById('btn-load-editor')!.addEventListener('click', async () => {
-  const filePath = prompt('Ruta absoluta de la canción:\n(ej: /Users/joantoniramoncrespi/Music/song.mp3)');
-  if (!filePath || !filePath.trim()) return;
-  const path = filePath.trim();
+  const path = await browseAndPickOneFile('Selecciona una canción');
+  if (!path) return;
   const name = path.split('/').pop() || path;
   state.editorFilePath = path;
   document.getElementById('editor-file')!.textContent = name;
@@ -405,6 +557,8 @@ document.getElementById('btn-load-editor')!.addEventListener('click', async () =
     log(`Error: ${result.error}`);
     return;
   }
+
+  state.editorDuration = result.duration || 0;
 
   document.getElementById('editor-info')!.textContent =
     `Duración: ${result.durationFormatted} | Peso: ${result.sizeFormatted} | Bitrate: ${result.bitrateFormatted}`;
@@ -420,10 +574,10 @@ document.getElementById('btn-load-editor')!.addEventListener('click', async () =
 });
 
 document.getElementById('btn-editor-output-dir')!.addEventListener('click', async () => {
-  const dir = prompt('Ruta absoluta de la carpeta de salida:\n(ej: /Users/joantoniramoncrespi/Music)');
-  if (dir && dir.trim()) {
-    state.editorOutputDir = dir.trim();
-    document.getElementById('editor-output-dir')!.textContent = state.editorOutputDir;
+  const dir = await browseFolder('Selecciona carpeta de salida');
+  if (dir) {
+    state.editorOutputDir = dir;
+    document.getElementById('editor-output-dir')!.textContent = dir;
   }
 });
 
@@ -440,7 +594,13 @@ document.getElementById('btn-generate-waveform')!.addEventListener('click', asyn
     const blob = await res.blob();
     const url = URL.createObjectURL(blob);
     const container = document.getElementById('waveform-container')!;
-    container.innerHTML = `<img src="${url}" alt="Forma de onda" />`;
+    container.innerHTML = '';
+    const canvas = document.createElement('canvas');
+    canvas.className = 'waveform-canvas';
+    canvas.width = container.clientWidth;
+    canvas.height = 200;
+    container.appendChild(canvas);
+    drawWaveformWithHandles(canvas, url);
     setStatus('Forma de onda generada');
     log('Forma de onda generada');
   } else {
@@ -448,6 +608,114 @@ document.getElementById('btn-generate-waveform')!.addEventListener('click', asyn
     log('Error generando forma de onda');
   }
 });
+
+// ── Interactive waveform with draggable handles ───────────
+
+function drawWaveformWithHandles(canvas: HTMLCanvasElement, imgSrc: string) {
+  const ctx = canvas.getContext('2d')!;
+  const img = new Image();
+  const duration = state.editorDuration || 0;
+
+  // handle positions as fraction of canvas width
+  let handles = { start: 0.05, end: 0.95, fadeIn: 0.15, fadeOut: 0.85 };
+  let dragging: string | null = null;
+
+  const top = 10, bottom = canvas.height - 30;
+
+  img.onload = () => {
+    redraw();
+  };
+  img.src = imgSrc;
+
+  function redraw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+    // dimmed regions outside selection
+    ctx.fillStyle = 'rgba(0,0,0,0.4)';
+    ctx.fillRect(0, top, handles.start * canvas.width, bottom - top);
+    ctx.fillRect(handles.end * canvas.width, top, canvas.width - handles.end * canvas.width, bottom - top);
+
+    drawHandleLine(handles.start, '#2f82df', 'inicio');
+    drawHandleLine(handles.end, '#2f82df', 'final');
+    drawHandleLine(handles.fadeIn, '#6aa6e8', 'fade in');
+    drawHandleLine(handles.fadeOut, '#6aa6e8', 'fade out');
+
+    // timeline labels
+    ctx.fillStyle = '#555';
+    ctx.font = '11px sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText('0:00', 4, canvas.height - 5);
+    ctx.textAlign = 'right';
+    if (duration > 0) ctx.fillText(formatTime(duration), canvas.width - 4, canvas.height - 5);
+  }
+
+  function drawHandleLine(fraction: number, color: string, label: string) {
+    const x = fraction * canvas.width;
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(x, top);
+    ctx.lineTo(x, bottom);
+    ctx.stroke();
+    // handle dot
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.arc(x, top + 4, 5, 0, Math.PI * 2);
+    ctx.fill();
+    // label
+    ctx.fillStyle = color;
+    ctx.font = '10px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(label, x, top - 4);
+  }
+
+  function getHandleAt(x: number): string | null {
+    const tolerance = 8;
+    for (const key of ['start', 'end', 'fadeIn', 'fadeOut']) {
+      const hx = handles[key as keyof typeof handles] * canvas.width;
+      if (Math.abs(x - hx) < tolerance) return key;
+    }
+    return null;
+  }
+
+  canvas.addEventListener('mousedown', (e) => {
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    dragging = getHandleAt(x);
+    if (dragging) canvas.style.cursor = 'grabbing';
+  });
+
+  canvas.addEventListener('mousemove', (e) => {
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    if (dragging) {
+      const frac = Math.max(0, Math.min(1, x / canvas.width));
+      (handles as any)[dragging] = frac;
+      // update editor inputs
+      if (duration > 0) {
+        const sec = (frac * duration).toFixed(1);
+        if (dragging === 'start') (document.getElementById('edit-start') as HTMLInputElement).value = sec;
+        if (dragging === 'end') (document.getElementById('edit-end') as HTMLInputElement).value = sec;
+        if (dragging === 'fadeIn') (document.getElementById('edit-fade-in') as HTMLInputElement).value = ((frac - handles.start) * duration).toFixed(1);
+        if (dragging === 'fadeOut') (document.getElementById('edit-fade-out') as HTMLInputElement).value = ((handles.end - frac) * duration).toFixed(1);
+      }
+      redraw();
+    } else {
+      const handle = getHandleAt(x);
+      canvas.style.cursor = handle ? 'grab' : 'default';
+    }
+  });
+
+  canvas.addEventListener('mouseup', () => { dragging = null; canvas.style.cursor = 'default'; });
+  canvas.addEventListener('mouseleave', () => { dragging = null; });
+}
+
+function formatTime(seconds: number): string {
+  const m = Math.floor(seconds / 60);
+  const s = Math.floor(seconds % 60);
+  return `${m}:${String(s).padStart(2, '0')}`;
+}
 
 document.getElementById('btn-export-editor')!.addEventListener('click', async () => {
   if (!state.editorFilePath) { log('Carga una canción primero'); return; }
@@ -472,8 +740,19 @@ document.getElementById('btn-export-editor')!.addEventListener('click', async ()
     return null;
   };
 
-  const baseName = state.editorFilePath.replace(/\.[^.]+$/, '').split('/').pop() || 'output';
-  const outputPath = `${state.editorOutputDir}/${baseName}_editado.mp3`;
+  // Build output filename from metadata: "Artist - Title.mp3"
+  // Falls back to original filename if metadata is empty
+  const titleMeta = (document.getElementById('meta-title') as HTMLInputElement)?.value?.trim() || '';
+  const artistMeta = (document.getElementById('meta-artist') as HTMLInputElement)?.value?.trim() || '';
+  let outputName: string;
+  if (artistMeta && titleMeta) {
+    outputName = `${artistMeta} - ${titleMeta}`;
+  } else if (titleMeta) {
+    outputName = titleMeta;
+  } else {
+    outputName = state.editorFilePath.replace(/\.[^.]+$/, '').split('/').pop() || 'output';
+  }
+  const outputPath = `${state.editorOutputDir}/${outputName}.mp3`;
 
   const result = await api('export-editor', {
     sourcePath: state.editorFilePath,
@@ -503,3 +782,8 @@ document.getElementById('btn-export-editor')!.addEventListener('click', async ()
 
 log('Music Tool iniciado');
 setStatus('Listo');
+
+// ── PWA: register service worker ─────────────────────────
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js').catch(() => {});
+}

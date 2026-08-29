@@ -6,8 +6,8 @@
 import express from 'express';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
-import { existsSync, statSync } from 'node:fs';
-import { resolve, join, dirname } from 'node:path';
+import { existsSync, statSync, readdirSync } from 'node:fs';
+import { resolve, join, dirname, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import which from 'which';
 
@@ -87,6 +87,73 @@ function flacCompressionValue(label: string): string {
 
 app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok' });
+});
+
+// ── File system browser ──────────────────────────────────
+// Lets the frontend navigate real folders instead of typing paths.
+
+const AUDIO_EXTENSIONS = ['.flac', '.mp3', '.wav', '.m4a', '.aac', '.ogg', '.opus'];
+
+app.get('/api/browse', (req, res) => {
+  const requestedPath = (req.query.path as string) || '';
+  // Default to home directory
+  let dirPath: string;
+  if (requestedPath && existsSync(requestedPath)) {
+    dirPath = resolve(requestedPath);
+  } else {
+    dirPath = resolve(process.env.HOME || '/Users');
+  }
+
+  try {
+    const entries = readdirSync(dirPath, { withFileTypes: true });
+    const folders = entries
+      .filter(e => e.isDirectory() && !e.name.startsWith('.'))
+      .map(e => e.name)
+      .sort();
+    const audioFiles = entries
+      .filter(e => {
+        if (!e.isFile()) return false;
+        const ext = '.' + e.name.split('.').pop()?.toLowerCase();
+        return AUDIO_EXTENSIONS.includes(ext);
+      })
+      .map(e => e.name)
+      .sort();
+
+    // parent directory for navigation
+    const parent = dirPath !== '/' ? dirname(dirPath) : null;
+
+    res.json({
+      current: dirPath,
+      parent,
+      folders,
+      audioFiles,
+      sep,
+    });
+  } catch {
+    res.status(403).json({ error: 'No se puede leer el directorio', current: dirPath });
+  }
+});
+
+app.post('/api/browse-select', (req, res) => {
+  // Returns the full path of a selected folder + lists its audio files
+  const { folderPath } = req.body;
+  if (!folderPath || !existsSync(folderPath)) {
+    res.status(400).json({ error: 'Ruta no válida' });
+    return;
+  }
+  try {
+    const entries = readdirSync(folderPath, { withFileTypes: true });
+    const audioFiles = entries
+      .filter(e => {
+        if (!e.isFile()) return false;
+        const ext = '.' + e.name.split('.').pop()?.toLowerCase();
+        return AUDIO_EXTENSIONS.includes(ext);
+      })
+      .map(e => join(folderPath, e.name));
+    res.json({ folderPath, audioFiles });
+  } catch {
+    res.status(403).json({ error: 'No se puede leer la carpeta' });
+  }
 });
 
 app.get('/api/formats', (_req, res) => {
