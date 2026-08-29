@@ -86,13 +86,17 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
 
 // ── Dial widget ─────────────────────────────────────────
 
-function createDial(container: HTMLElement, options: string[], initial: string, onChange: (val: string) => void) {
-  // Clone the container to remove old event listeners that accumulate on rebuild
-  const newContainer = container.cloneNode(false) as HTMLElement;
-  container.parentNode?.replaceChild(newContainer, container);
-  container = newContainer;
-  // Restore the id so getElementById still works
-  const oldId = newContainer.getAttribute('id') || '';
+function createDial(container: HTMLElement, options: string[], initial: string, onChange: (val: string) => void, replace: boolean = false) {
+  // Only replace the container when rebuilding (setOptions), not on first creation
+  if (replace) {
+    const parent = container.parentElement;
+    const fresh = document.createElement('div');
+    fresh.id = container.id;
+    fresh.className = container.className;
+    parent?.replaceChild(fresh, container);
+    container = fresh;
+  }
+  container.innerHTML = '';
 
   const wrapper = container.closest('.dial-wrapper') as HTMLElement;
   if (wrapper) wrapper.querySelectorAll('.cw-dial-label').forEach(l => l.remove());
@@ -139,6 +143,8 @@ function createDial(container: HTMLElement, options: string[], initial: string, 
   container.appendChild(notches);
   container.appendChild(dial);
 
+  const dialId = container.id;
+
   function update(selected: string) {
     const idx = options.indexOf(selected);
     if (idx < 0) return;
@@ -172,7 +178,7 @@ function createDial(container: HTMLElement, options: string[], initial: string, 
 
   update(initial);
   return { update, setOptions: (newOptions: string[], newInitial: string) => {
-    createDial(document.getElementById(oldId) as HTMLElement, newOptions, newInitial, onChange);
+    createDial(document.getElementById(dialId) as HTMLElement, newOptions, newInitial, onChange, true);
   }};
 }
 
@@ -212,37 +218,38 @@ async function browseFolder(title: string): Promise<string | null> {
 
     let selectedPath: string | null = null;
 
-    async function loadDir(path: string) {
+    function loadDir(path: string) {
       currentBrowsePath = path;
       pathDisplay.textContent = path;
       selectedPath = path;
       selectBtn.disabled = false;
-      try {
-        const res = await fetch(`/api/browse?path=${encodeURIComponent(path)}`);
-        const data = await res.json();
-        if (data.error) { list.innerHTML = `<div class="browse-error">${data.error}</div>`; return; }
-        list.innerHTML = '';
-        if (data.parent) {
-          const parentItem = document.createElement('div');
-          parentItem.className = 'browse-item browse-parent';
-          parentItem.innerHTML = '📁 ..';
-          parentItem.onclick = () => loadDir(data.parent);
-          list.appendChild(parentItem);
-        }
-        for (const folder of data.folders || []) {
-          const item = document.createElement('div');
-          item.className = 'browse-item browse-folder';
-          item.innerHTML = `📁 ${folder}`;
-          item.onclick = () => loadDir(join(data.current, folder));
-          list.appendChild(item);
-        }
-        for (const file of data.audioFiles || []) {
-          const item = document.createElement('div');
-          item.className = 'browse-item browse-file';
-          item.innerHTML = `🎵 ${file}`;
-          list.appendChild(item);
-        }
-      } catch (err) { list.innerHTML = `<div class="browse-error">Error: ${err}</div>`; }
+      fetch(`/api/browse?path=${encodeURIComponent(path)}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.error) { list.innerHTML = `<div class="browse-error">${data.error}</div>`; return; }
+          list.innerHTML = '';
+          if (data.parent) {
+            const parentItem = document.createElement('div');
+            parentItem.className = 'browse-item browse-parent';
+            parentItem.innerHTML = '📁 ..';
+            parentItem.onclick = () => loadDir(data.parent);
+            list.appendChild(parentItem);
+          }
+          for (const folder of data.folders || []) {
+            const item = document.createElement('div');
+            item.className = 'browse-item browse-folder';
+            item.innerHTML = `📁 ${folder}`;
+            item.onclick = () => loadDir(join(data.current, folder));
+            list.appendChild(item);
+          }
+          for (const file of data.audioFiles || []) {
+            const item = document.createElement('div');
+            item.className = 'browse-item browse-file';
+            item.innerHTML = `🎵 ${file}`;
+            list.appendChild(item);
+          }
+        })
+        .catch(err => { list.innerHTML = `<div class="browse-error">Error: ${err}</div>`; });
     }
     function join(base: string, name: string): string { return base.endsWith('/') ? base + name : base + '/' + name; }
     selectBtn.onclick = () => { if (selectedPath) { overlay.remove(); resolveFn(selectedPath); } };
@@ -254,7 +261,7 @@ async function browseFolder(title: string): Promise<string | null> {
 // ── Folder + file picker modal ───────────────────────────
 
 async function browseAndPickFiles(title: string): Promise<string[] | null> {
-  return new Promise(async (resolveFn) => {
+  return new Promise((resolveFn) => {
     const overlay = document.createElement('div');
     overlay.className = 'browse-overlay';
     const modal = document.createElement('div');
@@ -284,43 +291,44 @@ async function browseAndPickFiles(title: string): Promise<string[] | null> {
 
     const selectedFiles: Set<string> = new Set();
 
-    async function loadDir(path: string) {
+    function loadDir(path: string) {
       currentBrowsePath = path;
       pathDisplay.textContent = path;
-      try {
-        const res = await fetch(`/api/browse?path=${encodeURIComponent(path)}`);
-        const data = await res.json();
-        if (data.error) { list.innerHTML = `<div class="browse-error">${data.error}</div>`; return; }
-        list.innerHTML = '';
-        if (data.parent) {
-          const parentItem = document.createElement('div');
-          parentItem.className = 'browse-item browse-parent';
-          parentItem.innerHTML = '📁 ..';
-          parentItem.onclick = () => loadDir(data.parent);
-          list.appendChild(parentItem);
-        }
-        for (const folder of data.folders || []) {
-          const item = document.createElement('div');
-          item.className = 'browse-item browse-folder';
-          item.innerHTML = `📁 ${folder}`;
-          item.onclick = () => loadDir(join(data.current, folder));
-          list.appendChild(item);
-        }
-        for (const file of data.audioFiles || []) {
-          const fullPath = join(data.current, file);
-          const item = document.createElement('div');
-          item.className = 'browse-item browse-file browse-file-selectable';
-          item.innerHTML = `🎵 ${file}`;
-          if (selectedFiles.has(fullPath)) item.classList.add('browse-file-selected');
-          item.onclick = (e) => {
-            e.stopPropagation();
-            if (selectedFiles.has(fullPath)) { selectedFiles.delete(fullPath); item.classList.remove('browse-file-selected'); }
-            else { selectedFiles.add(fullPath); item.classList.add('browse-file-selected'); }
-            selectBtn.disabled = selectedFiles.size === 0;
-          };
-          list.appendChild(item);
-        }
-      } catch (err) { list.innerHTML = `<div class="browse-error">Error: ${err}</div>`; }
+      fetch(`/api/browse?path=${encodeURIComponent(path)}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.error) { list.innerHTML = `<div class="browse-error">${data.error}</div>`; return; }
+          list.innerHTML = '';
+          if (data.parent) {
+            const parentItem = document.createElement('div');
+            parentItem.className = 'browse-item browse-parent';
+            parentItem.innerHTML = '📁 ..';
+            parentItem.onclick = () => loadDir(data.parent);
+            list.appendChild(parentItem);
+          }
+          for (const folder of data.folders || []) {
+            const item = document.createElement('div');
+            item.className = 'browse-item browse-folder';
+            item.innerHTML = `📁 ${folder}`;
+            item.onclick = () => loadDir(join(data.current, folder));
+            list.appendChild(item);
+          }
+          for (const file of data.audioFiles || []) {
+            const fullPath = join(data.current, file);
+            const item = document.createElement('div');
+            item.className = 'browse-item browse-file browse-file-selectable';
+            item.innerHTML = `🎵 ${file}`;
+            if (selectedFiles.has(fullPath)) item.classList.add('browse-file-selected');
+            item.onclick = (e) => {
+              e.stopPropagation();
+              if (selectedFiles.has(fullPath)) { selectedFiles.delete(fullPath); item.classList.remove('browse-file-selected'); }
+              else { selectedFiles.add(fullPath); item.classList.add('browse-file-selected'); }
+              selectBtn.disabled = selectedFiles.size === 0;
+            };
+            list.appendChild(item);
+          }
+        })
+        .catch(err => { list.innerHTML = `<div class="browse-error">Error: ${err}</div>`; });
     }
     function join(base: string, name: string): string { return base.endsWith('/') ? base + name : base + '/' + name; }
     selectBtn.onclick = () => { if (selectedFiles.size > 0) { overlay.remove(); resolveFn(Array.from(selectedFiles)); } };
@@ -338,6 +346,23 @@ async function browseAndPickOneFile(title: string): Promise<string | null> {
 // ── Conversion tab ──────────────────────────────────────
 
 // Calidad dial must be created FIRST so the formato callback can reference it
+let dialInitializing = true;
+
+const dialFormato = createDial(
+  document.getElementById('dial-formato')!,
+  CONVERSION_FORMATS,
+  'MP3',
+  (val) => {
+    state.format = val;
+    if (dialInitializing) return;
+    const qualities = QUALITY_OPTIONS[val] || ['128k'];
+    if (!qualities.includes(state.quality)) {
+      state.quality = qualities[0];
+    }
+    dialCalidad.setOptions(qualities, state.quality);
+  }
+);
+
 const dialCalidad = createDial(
   document.getElementById('dial-calidad')!,
   QUALITY_OPTIONS['MP3'],
@@ -347,18 +372,13 @@ const dialCalidad = createDial(
   }
 );
 
-const dialFormato = createDial(
-  document.getElementById('dial-formato')!,
-  CONVERSION_FORMATS,
-  'MP3',
-  (val) => {
-    state.format = val;
-    // update quality dial with new options
-    const qualities = QUALITY_OPTIONS[val] || ['128k'];
-    state.quality = qualities[0];
-    dialCalidad.setOptions(qualities, state.quality);
-  }
-);
+dialInitializing = false;
+
+// Force initial selection to MP3 + 320k
+state.format = 'MP3';
+state.quality = '320k';
+dialFormato.update('MP3');
+dialCalidad.update('320k');
 
 document.getElementById('btn-add-files')!.addEventListener('click', async () => {
   const files = await browseAndPickFiles('Selecciona canciones');
