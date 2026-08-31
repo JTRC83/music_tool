@@ -1,5 +1,5 @@
 // Music Tool — Service Worker for PWA
-const CACHE_NAME = 'music-tool-v6';
+const CACHE_NAME = 'music-tool-v7';
 const ASSETS = [
   '/',
   '/index.html',
